@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "name": "ai-sweety",
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/chat", "dest": "/chat.html" },
+    { "src": "/login", "dest": "/login.html" },
+    { "src": "/register", "dest": "/register.html" },
+    { "src": "/profile", "dest": "/profile.html" },
+    { "src": "/social", "dest": "/social.html" },
+    { "src": "/bio", "dest": "/bio.html" },
+    { "src": "/forgot-password", "dest": "/forgot-password.html" },
+    { "src": "/reset-password", "dest": "/reset-password.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AI Sweety — Your All-in-One AI Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--pink:#ff6b9d;--pink2:#ff4081;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--dark3:#1a1a2e;--card:#16213e;--text:#f0f0ff;--muted:#8888aa;--gold:#ffd700;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);animation:float 8s ease-in-out infinite;}
+.orb1{width:400px;height:400px;background:rgba(168,85,247,.25);top:-100px;left:-100px;}
+.orb2{width:350px;height:350px;background:rgba(255,107,157,.2);bottom:-50px;right:-80px;animation-delay:3s;}
+.orb3{width:250px;height:250px;background:rgba(255,64,129,.15);top:50%;left:50%;animation-delay:5s;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-30px);}}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 2rem;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.05);}
+.logo{display:flex;align-items:center;gap:.6rem;font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;-webkit-text-fill-color:initial;}
+.nav-btns{display:flex;gap:1rem;}
+.btn{padding:.6rem 1.4rem;border-radius:50px;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .3s;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--text);}
+.btn-ghost:hover{border-color:var(--pink);color:var(--pink);}
+.btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,107,157,.4);}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;z-index:1;}
+.badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,107,157,.1);border:1px solid rgba(255,107,157,.3);color:var(--pink);padding:.4rem 1rem;border-radius:50px;font-size:.8rem;font-weight:600;margin-bottom:2rem;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(3rem,8vw,6rem);font-weight:900;line-height:1.05;margin-bottom:1.5rem;}
+.hero h1 span{background:linear-gradient(135deg,var(--pink),var(--purple),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:clamp(1rem,2.5vw,1.2rem);color:var(--muted);max-width:650px;line-height:1.8;margin-bottom:2.5rem;}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;}
+.btn-lg{padding:.9rem 2.2rem;font-size:1rem;}
+.lang-bar{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1rem 1.5rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:2.5rem;}
+.lang-bar span.label{color:var(--muted);font-size:.85rem;}
+.lang-chip{background:rgba(255,107,157,.08);border:1px solid rgba(255,107,157,.2);color:var(--text);padding:.3rem .8rem;border-radius:50px;font-size:.78rem;cursor:pointer;transition:all .2s;}
+.lang-chip:hover,.lang-chip.active{background:var(--pink);border-color:var(--pink);color:#fff;}
+.features{padding:5rem 2rem;position:relative;z-index:1;}
+.section-title{text-align:center;margin-bottom:3.5rem;}
+.section-title h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;margin-bottom:.75rem;}
+.section-title p{color:var(--muted);font-size:1rem;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.5rem;max-width:1100px;margin:0 auto;}
+.card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:2rem;transition:all .3s;}
+.card:hover{transform:translateY(-6px);border-color:rgba(255,107,157,.3);}
+.card-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:1.2rem;}
+.card h3{font-size:1.05rem;font-weight:600;margin-bottom:.6rem;}
+.card p{color:var(--muted);font-size:.88rem;line-height:1.7;}
+.steps{padding:5rem 2rem;background:var(--dark2);position:relative;z-index:1;}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;max-width:900px;margin:0 auto;}
+.step{text-align:center;}
+.step-num{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;margin:0 auto 1rem;}
+.step h3{font-size:1rem;font-weight:600;margin-bottom:.5rem;}
+.step p{color:var(--muted);font-size:.88rem;line-height:1.6;}
+.cta{padding:6rem 2rem;text-align:center;position:relative;z-index:1;}
+.cta-box{background:linear-gradient(135deg,rgba(255,107,157,.12),rgba(168,85,247,.12));border:1px solid rgba(255,107,157,.2);border-radius:28px;padding:4rem 2rem;max-width:700px;margin:0 auto;}
+.cta-box h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:900;margin-bottom:1rem;}
+.cta-box p{color:var(--muted);margin-bottom:2rem;}
+footer{background:var(--dark2);border-top:1px solid rgba(255,255,255,.05);padding:2rem;text-align:center;color:var(--muted);font-size:.85rem;position:relative;z-index:1;}
+.demo-chat{background:var(--dark3);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:1.5rem;max-width:520px;margin:2.5rem auto 0;text-align:left;}
+.demo-msg{display:flex;gap:.8rem;margin-bottom:1rem;align-items:flex-start;}
+.demo-avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
+.demo-bubble{background:rgba(255,255,255,.06);border-radius:12px;padding:.7rem 1rem;font-size:.88rem;line-height:1.5;}
+.demo-msg.sweety .demo-avatar{background:linear-gradient(135deg,var(--pink),var(--purple));}
+.demo-msg.user .demo-avatar{background:rgba(255,255,255,.1);}
+.demo-msg.sweety .demo-bubble{background:rgba(255,107,157,.1);border:1px solid rgba(255,107,157,.15);}
+.watermark{font-size:.72rem;color:var(--pink);margin-top:.4rem;opacity:.7;}
+.cursor{display:inline-block;width:2px;height:14px;background:var(--pink);animation:blink .8s infinite;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+</style>
+</head>
+<body>
+<div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+<nav>
+  <div class="logo"><div class="logo-icon">🌸</div>AI Sweety</div>
+  <div class="nav-btns">
+    <a href="login.html" class="btn btn-ghost">Login</a>
+    <a href="register.html" class="btn btn-primary">Get Started</a>
+  </div>
+</nav>
+<section class="hero">
+  <div class="badge">✨ All-in-One AI Platform — Free to Use</div>
+  <h1>Meet <span>AI Sweety</span><br/>Your Smartest Friend</h1>
+  <p>Chat, create images, solve legal & IT problems, get live news, and connect with people — all in one beautiful platform, in 15 languages.</p>
+  <div class="hero-btns">
+    <a href="register.html" class="btn btn-primary btn-lg">🚀 Start for Free</a>
+    <a href="chat.html" class="btn btn-ghost btn-lg">💬 Try Sweety</a>
+  </div>
+  <div class="lang-bar">
+    <span class="label">🌐 Choose language:</span>
+    <span class="lang-chip active">English</span><span class="lang-chip">हिंदी</span><span class="lang-chip">தமிழ்</span>
+    <span class="lang-chip">తెలుగు</span><span class="lang-chip">ಕನ್ನಡ</span><span class="lang-chip">മലയാളം</span>
+    <span class="lang-chip">मराठी</span><span class="lang-chip">বাংলা</span><span class="lang-chip">ગુજરાતી</span>
+    <span class="lang-chip">ਪੰਜਾਬੀ</span><span class="lang-chip">اردو</span><span class="lang-chip">العربية</span>
+    <span class="lang-chip">Français</span><span class="lang-chip">Español</span><span class="lang-chip">中文</span>
+  </div>
+  <div class="demo-chat">
+    <div class="demo-msg user"><div class="demo-avatar">👤</div><div class="demo-bubble">Sweety, help me understand my tenant rights.</div></div>
+    <div class="demo-msg sweety"><div class="demo-avatar">🌸</div><div class="demo-bubble">As a tenant, you have the right to a safe, habitable home. Your landlord must give notice before entry and cannot cut utilities as pressure. <span class="cursor"></span><div class="watermark">© AI Sweety</div></div></div>
+  </div>
+</section>
+<section class="features">
+  <div class="section-title"><h2>Everything you need, <span style="color:var(--pink)">in one place</span></h2><p>Sweety is more than a chatbot — it's your all-in-one AI platform</p></div>
+  <div class="grid">
+    <div class="card"><div class="card-icon" style="background:rgba(255,107,157,.15);">🤖</div><h3>AI Chat Assistant</h3><p>Ask anything — legal cases, IT problems, cooking, studies. Sweety has answers.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(168,85,247,.15);">🎨</div><h3>AI Image Generation</h3><p>Describe any image and Sweety creates it instantly — portraits, art, logos and more.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(255,215,0,.12);">📰</div><h3>Live News & Web Search</h3><p>Get real-time news and web results powered by Tavily search engine.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(0,200,150,.12);">⚖️</div><h3>Legal & IT Help</h3><p>AI-powered advice for legal questions, coding bugs, and professional fields.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(255,107,157,.1);">📸</div><h3>Social Platform</h3><p>Follow people, share stories, post reels — Instagram-style but powered by AI.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(100,150,255,.12);">📂</div><h3>Upload & Analyze</h3><p>Upload photos, documents, files. Sweety reads and solves problems from your uploads.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(255,150,50,.12);">🌐</div><h3>15 Languages</h3><p>Chat in English, Hindi, Tamil, Telugu, Kannada, Malayalam and 9 more languages.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(168,85,247,.1);">🔒</div><h3>Secure & Private</h3><p>Protected with Supabase authentication — your data stays safe always.</p></div>
+  </div>
+</section>
+<section class="steps">
+  <div class="section-title"><h2>Get started in <span style="color:var(--pink)">3 steps</span></h2><p>It only takes a minute to join</p></div>
+  <div class="steps-grid">
+    <div class="step"><div class="step-num">1</div><h3>Register</h3><p>Sign up with your name, Gmail, password and mobile number. Quick and free.</p></div>
+    <div class="step"><div class="step-num">2</div><h3>Choose Language</h3><p>Pick from 15 languages. Sweety will always respond in your preferred language.</p></div>
+    <div class="step"><div class="step-num">3</div><h3>Start Chatting!</h3><p>Ask questions, generate images, post on social — Sweety is ready 24/7.</p></div>
+  </div>
+</section>
+<section class="cta">
+  <div class="cta-box">
+    <h2>Ready to meet <span style="color:var(--pink)">Sweety?</span> 🌸</h2>
+    <p>Join thousands of users solving real problems with AI. It's completely free to start.</p>
+    <a href="register.html" class="btn btn-primary btn-lg">Create Your Free Account →</a>
+  </div>
+</section>
+<footer><p>© 2024 AI Sweety — Built with ❤️ | All rights reserved</p><p style="margin-top:.4rem;">Powered by Groq · OpenRouter · Hugging Face · Supabase · Tavily</p></footer>
+<script>
+document.querySelectorAll('.lang-chip').forEach(c=>{c.onclick=()=>{document.querySelectorAll('.lang-chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');};});
+</script>
+</body></html>

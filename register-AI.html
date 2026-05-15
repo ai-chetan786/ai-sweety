@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Register — AI Sweety</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="api/config.js"></script>
+<style>
+:root{--pink:#ff6b9d;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--card:#16213e;--text:#f0f0ff;--muted:#8888aa;--error:#ff4d4d;--success:#4dff91;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);}
+.orb1{width:350px;height:350px;background:rgba(168,85,247,.2);top:-80px;left:-80px;}
+.orb2{width:300px;height:300px;background:rgba(255,107,157,.15);bottom:-60px;right:-60px;}
+.container{width:100%;max-width:480px;position:relative;z-index:1;}
+.logo-link{display:flex;align-items:center;gap:.6rem;text-decoration:none;justify-content:center;margin-bottom:2rem;}
+.logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;}
+.logo-text{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:24px;padding:2.5rem;}
+.card h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:.4rem;}
+.card .subtitle{color:var(--muted);font-size:.9rem;margin-bottom:2rem;}
+.form-group{margin-bottom:1.2rem;}
+label{display:block;font-size:.85rem;font-weight:500;color:var(--muted);margin-bottom:.5rem;}
+input,select{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.85rem 1rem;color:var(--text);font-size:.95rem;font-family:'DM Sans',sans-serif;transition:all .2s;outline:none;}
+input:focus,select:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,107,157,.15);}
+input::placeholder{color:var(--muted);}
+select option{background:var(--dark2);color:var(--text);}
+.input-icon{position:relative;}
+.input-icon input{padding-left:2.8rem;}
+.input-icon .icon{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;}
+.password-wrap{position:relative;}
+.password-wrap input{padding-right:3rem;}
+.toggle-pw{position:absolute;right:.9rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:var(--muted);}
+.strength-bar{height:4px;border-radius:2px;margin-top:.5rem;transition:all .3s;background:rgba(255,255,255,.1);}
+.strength-text{font-size:.75rem;color:var(--muted);margin-top:.3rem;}
+.lang-select-wrap{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.4rem;}
+.lang-opt{background:rgba(255,107,157,.08);border:1px solid rgba(255,107,157,.2);color:var(--text);padding:.3rem .7rem;border-radius:50px;font-size:.75rem;cursor:pointer;transition:all .2s;}
+.lang-opt.active{background:var(--pink);border-color:var(--pink);color:#fff;}
+.terms{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:1.5rem;}
+.terms input[type=checkbox]{width:auto;flex-shrink:0;margin-top:2px;}
+.terms label{font-size:.83rem;color:var(--muted);cursor:pointer;}
+.terms a{color:var(--pink);text-decoration:none;}
+.btn{width:100%;padding:.95rem;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:all .3s;border:none;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,107,157,.4);}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;}
+.divider{text-align:center;color:var(--muted);font-size:.85rem;margin:1.2rem 0;position:relative;}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:rgba(255,255,255,.08);}
+.divider::before{left:0;}.divider::after{right:0;}
+.login-link{text-align:center;margin-top:1.2rem;font-size:.9rem;color:var(--muted);}
+.login-link a{color:var(--pink);text-decoration:none;font-weight:600;}
+.alert{padding:.9rem 1rem;border-radius:10px;font-size:.88rem;margin-bottom:1rem;display:none;}
+.alert.error{background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.3);color:var(--error);}
+.alert.success{background:rgba(77,255,145,.1);border:1px solid rgba(77,255,145,.3);color:var(--success);}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div></div>
+<div class="container">
+  <a href="index.html" class="logo-link"><div class="logo-icon">🌸</div><span class="logo-text">AI Sweety</span></a>
+  <div class="card">
+    <h2>Create Account</h2>
+    <p class="subtitle">Join AI Sweety — it's free forever 🌸</p>
+    <div class="alert error" id="errorMsg"></div>
+    <div class="alert success" id="successMsg"></div>
+    <div class="form-group">
+      <label>Full Name</label>
+      <div class="input-icon"><span class="icon">👤</span><input type="text" id="fullName" placeholder="Your full name" autocomplete="name"/></div>
+    </div>
+    <div class="form-group">
+      <label>Gmail Address</label>
+      <div class="input-icon"><span class="icon">📧</span><input type="email" id="email" placeholder="you@gmail.com" autocomplete="email"/></div>
+    </div>
+    <div class="form-group">
+      <label>Mobile Number</label>
+      <div class="input-icon"><span class="icon">📱</span><input type="tel" id="mobile" placeholder="+91 9876543210"/></div>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="password-wrap">
+        <input type="password" id="password" placeholder="Min 8 characters" autocomplete="new-password" oninput="checkStrength(this.value)"/>
+        <button class="toggle-pw" onclick="togglePw('password')" type="button">👁️</button>
+      </div>
+      <div class="strength-bar" id="strengthBar"></div>
+      <div class="strength-text" id="strengthText"></div>
+    </div>
+    <div class="form-group">
+      <label>Confirm Password</label>
+      <div class="password-wrap">
+        <input type="password" id="confirmPassword" placeholder="Repeat password" autocomplete="new-password"/>
+        <button class="toggle-pw" onclick="togglePw('confirmPassword')" type="button">👁️</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Preferred Language</label>
+      <div class="lang-select-wrap" id="langOpts">
+        <span class="lang-opt active" data-lang="en">English</span>
+        <span class="lang-opt" data-lang="hi">हिंदी</span>
+        <span class="lang-opt" data-lang="ta">தமிழ்</span>
+        <span class="lang-opt" data-lang="te">తెలుగు</span>
+        <span class="lang-opt" data-lang="kn">ಕನ್ನಡ</span>
+        <span class="lang-opt" data-lang="ml">മലയാളം</span>
+        <span class="lang-opt" data-lang="mr">मराठी</span>
+        <span class="lang-opt" data-lang="bn">বাংলা</span>
+        <span class="lang-opt" data-lang="gu">ગુજરાતી</span>
+        <span class="lang-opt" data-lang="fr">Français</span>
+        <span class="lang-opt" data-lang="es">Español</span>
+        <span class="lang-opt" data-lang="ar">العربية</span>
+        <span class="lang-opt" data-lang="zh">中文</span>
+      </div>
+    </div>
+    <div class="terms">
+      <input type="checkbox" id="terms"/>
+      <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+    </div>
+    <button class="btn btn-primary" id="registerBtn" onclick="register()">🌸 Create Account</button>
+    <div class="login-link">Already have an account? <a href="login.html">Sign in →</a></div>
+  </div>
+</div>
+<script>
+let selectedLang = 'en';
+document.querySelectorAll('.lang-opt').forEach(o=>{
+  o.onclick=()=>{document.querySelectorAll('.lang-opt').forEach(x=>x.classList.remove('active'));o.classList.add('active');selectedLang=o.dataset.lang;};
+});
+function togglePw(id){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';}
+function checkStrength(pw){
+  const bar=document.getElementById('strengthBar'),txt=document.getElementById('strengthText');
+  let score=0;
+  if(pw.length>=8)score++;if(pw.length>=12)score++;if(/[A-Z]/.test(pw))score++;if(/[0-9]/.test(pw))score++;if(/[^A-Za-z0-9]/.test(pw))score++;
+  const colors=['#ff4d4d','#ff9944','#ffd700','#4dff91','#00e5ff'];
+  const labels=['Very Weak','Weak','Fair','Strong','Very Strong'];
+  bar.style.background=colors[score-1]||'rgba(255,255,255,.1)';
+  bar.style.width=(score*20)+'%';
+  txt.textContent=pw?labels[score-1]||'':'';
+  txt.style.color=colors[score-1]||'var(--muted)';
+}
+function showAlert(type,msg){
+  document.getElementById('errorMsg').style.display='none';
+  document.getElementById('successMsg').style.display='none';
+  const el=document.getElementById(type==='error'?'errorMsg':'successMsg');
+  el.textContent=msg;el.style.display='block';
+}
+async function register(){
+  const name=document.getElementById('fullName').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const mobile=document.getElementById('mobile').value.trim();
+  const password=document.getElementById('password').value;
+  const confirm=document.getElementById('confirmPassword').value;
+  const termsChecked=document.getElementById('terms').checked;
+  if(!name||!email||!mobile||!password||!confirm){return showAlert('error','Please fill all fields.');}
+  if(!email.includes('@')){return showAlert('error','Please enter a valid Gmail address.');}
+  if(password.length<8){return showAlert('error','Password must be at least 8 characters.');}
+  if(password!==confirm){return showAlert('error','Passwords do not match.');}
+  if(!termsChecked){return showAlert('error','Please accept the Terms of Service.');}
+  const btn=document.getElementById('registerBtn');
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Creating account...';
+  try{
+    const sb=getSupabase();
+    const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:name,mobile,preferred_lang:selectedLang}}});
+    if(error)throw error;
+    // Insert profile
+    if(data.user){
+      await sb.from('profiles').insert({id:data.user.id,full_name:name,email,mobile,preferred_lang:selectedLang,created_at:new Date().toISOString()});
+    }
+    showAlert('success','Account created! Please check your email to verify your account. 🌸');
+    setTimeout(()=>window.location.href='login.html',3000);
+  }catch(err){
+    showAlert('error',err.message||'Registration failed. Please try again.');
+  }finally{btn.disabled=false;btn.innerHTML='🌸 Create Account';}
+}
+</script>
+</body></html>

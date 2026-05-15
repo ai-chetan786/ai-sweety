@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Social — AI Sweety</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="api/config.js"></script>
+<style>
+:root{--pink:#ff6b9d;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--dark3:#1a1a2e;--card:#16213e;--text:#f0f0ff;--muted:#8888aa;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+.topnav{padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);position:sticky;top:0;z-index:50;background:rgba(10,10,15,.9);backdrop-filter:blur(12px);}
+.logo{display:flex;align-items:center;gap:.5rem;font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;-webkit-text-fill-color:initial;}
+.nav-links{display:flex;gap:.4rem;}
+.nav-link{padding:.5rem .9rem;border-radius:50px;font-size:.84rem;text-decoration:none;color:var(--muted);transition:.2s;}
+.nav-link:hover,.nav-link.active{color:var(--pink);}
+.icon-btn{width:34px;height:34px;border-radius:8px;background:none;border:1px solid rgba(255,255,255,.1);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:.2s;}
+.icon-btn:hover{border-color:var(--pink);color:var(--pink);}
+
+/* Layout */
+.layout{max-width:980px;margin:0 auto;padding:1.5rem;display:grid;grid-template-columns:1fr 300px;gap:1.5rem;}
+@media(max-width:700px){.layout{grid-template-columns:1fr;}.right-panel{display:none;}}
+
+/* Stories */
+.stories-bar{background:var(--dark2);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1rem;display:flex;gap:.8rem;overflow-x:auto;margin-bottom:1.2rem;}
+.stories-bar::-webkit-scrollbar{display:none;}
+.story{display:flex;flex-direction:column;align-items:center;gap:.4rem;cursor:pointer;flex-shrink:0;}
+.story-ring{width:58px;height:58px;border-radius:50%;padding:2px;background:linear-gradient(135deg,var(--pink),var(--purple));}
+.story-avatar{width:100%;height:100%;border-radius:50%;background:var(--dark3);border:2px solid var(--dark2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;overflow:hidden;}
+.story-avatar img{width:100%;height:100%;object-fit:cover;}
+.story-name{font-size:.7rem;color:var(--muted);text-align:center;width:58px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.add-story .story-ring{background:rgba(255,255,255,.08);}
+.add-story .story-avatar{font-size:1.6rem;border:none;}
+
+/* New post */
+.new-post-box{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1rem;margin-bottom:1.2rem;}
+.new-post-top{display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem;}
+.post-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.9rem;overflow:hidden;flex-shrink:0;}
+.post-avatar img{width:100%;height:100%;object-fit:cover;}
+.new-post-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:.6rem 1rem;color:var(--muted);font-size:.88rem;cursor:pointer;transition:.2s;}
+.new-post-input:hover{border-color:var(--pink);}
+.post-actions-bar{display:flex;gap:.5rem;flex-wrap:wrap;}
+.post-action{display:flex;align-items:center;gap:.4rem;padding:.4rem .8rem;border-radius:50px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:var(--muted);font-size:.8rem;cursor:pointer;transition:.2s;}
+.post-action:hover{border-color:var(--pink);color:var(--pink);}
+
+/* Feed post */
+.post-card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;margin-bottom:1.2rem;}
+.post-header{display:flex;align-items:center;gap:.8rem;padding:1rem;}
+.post-user-info{flex:1;}
+.post-user-name{font-size:.92rem;font-weight:600;}
+.post-meta{font-size:.75rem;color:var(--muted);}
+.follow-btn{background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;padding:.3rem .9rem;border-radius:50px;font-size:.78rem;cursor:pointer;font-weight:600;}
+.follow-btn.following{background:rgba(255,255,255,.08);color:var(--muted);}
+.post-img{width:100%;max-height:460px;object-fit:cover;}
+.post-body{padding:.8rem 1rem;}
+.post-caption{font-size:.88rem;line-height:1.6;margin-bottom:.8rem;}
+.post-caption .handle{color:var(--pink);font-weight:600;}
+.post-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.8rem;}
+.tag{font-size:.78rem;color:var(--purple);cursor:pointer;}
+.post-footer{display:flex;align-items:center;gap:1.2rem;padding:.6rem 1rem;border-top:1px solid rgba(255,255,255,.05);}
+.action{display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.85rem;color:var(--muted);transition:.2s;background:none;border:none;}
+.action:hover,.action.liked{color:var(--pink);}
+.action.liked .heart{animation:heartPop .3s ease;}
+@keyframes heartPop{0%,100%{transform:scale(1);}50%{transform:scale(1.4);}}
+.action.bookmarked{color:var(--purple);}
+.share-action{margin-left:auto;}
+.watermark-post{font-size:.7rem;color:var(--pink);opacity:.6;margin-top:.4rem;}
+
+/* Right panel */
+.right-panel{display:flex;flex-direction:column;gap:1rem;}
+.panel-card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.2rem;}
+.panel-title{font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.8rem;}
+.suggest-user{display:flex;align-items:center;gap:.7rem;margin-bottom:.8rem;}
+.suggest-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.9rem;}
+.suggest-info{flex:1;}
+.suggest-name{font-size:.85rem;font-weight:600;}
+.suggest-sub{font-size:.73rem;color:var(--muted);}
+.follow-sm{background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;padding:.3rem .7rem;border-radius:50px;font-size:.75rem;cursor:pointer;font-weight:600;}
+
+/* Story viewer */
+.story-modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:300;display:none;align-items:center;justify-content:center;}
+.story-modal.open{display:flex;}
+.story-content{width:100%;max-width:420px;height:100vh;max-height:700px;background:var(--dark3);border-radius:16px;overflow:hidden;position:relative;}
+.story-progress{display:flex;gap:3px;padding:.8rem;position:absolute;top:0;left:0;right:0;z-index:2;}
+.progress-seg{flex:1;height:3px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:#fff;width:0;transition:width linear;}
+.story-header{display:flex;align-items:center;gap:.7rem;padding:.5rem .8rem;position:absolute;top:28px;left:0;right:0;z-index:2;}
+.story-close{position:absolute;top:.8rem;right:.8rem;z-index:2;background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer;}
+.story-bg{width:100%;height:100%;background:linear-gradient(135deg,rgba(255,107,157,.3),rgba(168,85,247,.3));display:flex;align-items:center;justify-content:center;font-size:5rem;}
+
+/* Post modal */
+.post-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem;}
+.post-modal.open{display:flex;}
+.post-form{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:1.5rem;width:100%;max-width:500px;}
+.post-form h3{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:1.2rem;}
+.post-form textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:.9rem;color:var(--text);font-size:.9rem;font-family:'DM Sans',sans-serif;resize:none;outline:none;min-height:100px;}
+.post-form textarea:focus{border-color:var(--pink);}
+.post-form-actions{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;}
+.attach-row{display:flex;gap:.5rem;}
+.attach-icon{width:34px;height:34px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;transition:.2s;}
+.attach-icon:hover{border-color:var(--pink);}
+.post-submit{background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;padding:.6rem 1.4rem;border-radius:50px;font-size:.88rem;font-weight:600;cursor:pointer;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+#postFileInput{display:none;}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="logo"><div class="logo-icon">🌸</div>AI Sweety</a>
+  <div class="nav-links">
+    <a href="chat.html" class="nav-link">💬 Chat</a>
+    <a href="social.html" class="nav-link active">📸 Social</a>
+    <a href="profile.html" class="nav-link">👤 Profile</a>
+  </div>
+  <div style="display:flex;gap:.5rem;">
+    <button class="icon-btn">🔔</button>
+    <button class="icon-btn">🔍</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <div class="feed-col">
+    <!-- Stories -->
+    <div class="stories-bar" id="storiesBar">
+      <div class="story add-story" onclick="openAddStory()">
+        <div class="story-ring"><div class="story-avatar">➕</div></div>
+        <span class="story-name">Add Story</span>
+      </div>
+      <div class="story" onclick="openStory('Sweety',0)">
+        <div class="story-ring"><div class="story-avatar">🌸</div></div>
+        <span class="story-name">Sweety</span>
+      </div>
+      <div class="story" onclick="openStory('Priya',1)">
+        <div class="story-ring"><div class="story-avatar">👩</div></div>
+        <span class="story-name">Priya</span>
+      </div>
+      <div class="story" onclick="openStory('Rahul',2)">
+        <div class="story-ring"><div class="story-avatar">👦</div></div>
+        <span class="story-name">Rahul</span>
+      </div>
+      <div class="story" onclick="openStory('Anita',3)">
+        <div class="story-ring"><div class="story-avatar">🧕</div></div>
+        <span class="story-name">Anita</span>
+      </div>
+    </div>
+
+    <!-- New Post Box -->
+    <div class="new-post-box">
+      <div class="new-post-top">
+        <div class="post-avatar" id="myAvatar">🌸</div>
+        <div class="new-post-input" onclick="openPostModal()">What's on your mind?</div>
+      </div>
+      <div class="post-actions-bar">
+        <div class="post-action" onclick="openPostModal()">📷 Photo</div>
+        <div class="post-action" onclick="openPostModal()">🎬 Reel</div>
+        <div class="post-action" onclick="openPostModal()">📝 Story</div>
+        <div class="post-action" onclick="openPostModal()">🎨 AI Art</div>
+      </div>
+    </div>
+
+    <!-- Feed -->
+    <div id="feed">
+      <!-- Post 1 -->
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar">🌸</div>
+          <div class="post-user-info">
+            <div class="post-user-name">AI Sweety</div>
+            <div class="post-meta">Official · 2 min ago</div>
+          </div>
+          <button class="follow-btn following">Following ✓</button>
+        </div>
+        <div class="post-body">
+          <div class="post-caption">Welcome to <span class="handle">@AISweety</span> Social! 🌸 Connect, share, and grow together. Ask Sweety anything — even right here in the feed! ✨</div>
+          <div class="post-tags"><span class="tag">#AISweety</span><span class="tag">#AI</span><span class="tag">#Community</span></div>
+          <div class="watermark-post">© AI Sweety</div>
+        </div>
+        <div class="post-footer">
+          <button class="action" onclick="toggleLike(this)"><span class="heart">🤍</span><span>0</span></button>
+          <button class="action">💬 <span>0</span></button>
+          <button class="action">↗️ Share</button>
+          <button class="action share-action bookmark" onclick="toggleBookmark(this)">🔖</button>
+        </div>
+      </div>
+      <!-- Post 2 -->
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar">👩</div>
+          <div class="post-user-info">
+            <div class="post-user-name">Priya Sharma</div>
+            <div class="post-meta">Member · 1 hr ago</div>
+          </div>
+          <button class="follow-btn" onclick="toggleFollow(this)">Follow +</button>
+        </div>
+        <div style="background:linear-gradient(135deg,rgba(255,107,157,.25),rgba(168,85,247,.25));height:220px;display:flex;align-items:center;justify-content:center;font-size:4rem;">🌺</div>
+        <div class="post-body">
+          <div class="post-caption">Just got my legal question answered by <span class="handle">@AISweety</span> in seconds! 🎉 This platform is amazing for everyone — students, professionals, everyone!</div>
+          <div class="post-tags"><span class="tag">#Legal</span><span class="tag">#AISweety</span><span class="tag">#Helpful</span></div>
+        </div>
+        <div class="post-footer">
+          <button class="action" onclick="toggleLike(this)"><span class="heart">🤍</span><span>24</span></button>
+          <button class="action">💬 <span>5</span></button>
+          <button class="action">↗️ Share</button>
+          <button class="action share-action" onclick="toggleBookmark(this)">🔖</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="right-panel">
+    <div class="panel-card">
+      <div class="panel-title">Suggested For You</div>
+      <div class="suggest-user"><div class="suggest-avatar">👦</div><div class="suggest-info"><div class="suggest-name">Rahul Kumar</div><div class="suggest-sub">IT Expert · 1.2K followers</div></div><button class="follow-sm">Follow</button></div>
+      <div class="suggest-user"><div class="suggest-avatar">🧕</div><div class="suggest-info"><div class="suggest-name">Anita Patel</div><div class="suggest-sub">Lawyer · 890 followers</div></div><button class="follow-sm">Follow</button></div>
+      <div class="suggest-user"><div class="suggest-avatar">🧑‍💻</div><div class="suggest-info"><div class="suggest-name">Dev Coder</div><div class="suggest-sub">Developer · 2.1K followers</div></div><button class="follow-sm">Follow</button></div>
+    </div>
+    <div class="panel-card">
+      <div class="panel-title">Trending Tags</div>
+      <div style="display:flex;flex-wrap:wrap;gap:.4rem;">
+        <span class="tag" style="background:rgba(168,85,247,.1);padding:.3rem .7rem;border-radius:50px;">#AISweety</span>
+        <span class="tag" style="background:rgba(168,85,247,.1);padding:.3rem .7rem;border-radius:50px;">#LegalHelp</span>
+        <span class="tag" style="background:rgba(168,85,247,.1);padding:.3rem .7rem;border-radius:50px;">#ITSupport</span>
+        <span class="tag" style="background:rgba(168,85,247,.1);padding:.3rem .7rem;border-radius:50px;">#AIArt</span>
+        <span class="tag" style="background:rgba(168,85,247,.1);padding:.3rem .7rem;border-radius:50px;">#Community</span>
+      </div>
+    </div>
+    <div class="panel-card" style="font-size:.75rem;color:var(--muted);line-height:1.8;">
+      © 2024 AI Sweety · Privacy · Terms<br/>Powered by Groq · Supabase · HuggingFace
+    </div>
+  </div>
+</div>
+
+<!-- Story Modal -->
+<div class="story-modal" id="storyModal">
+  <div class="story-content">
+    <div class="story-progress"><div class="progress-seg"><div class="progress-fill" id="storyProgress"></div></div></div>
+    <div class="story-header">
+      <div class="story-avatar" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;" id="storyAvatarIcon">🌸</div>
+      <div><div style="font-size:.88rem;font-weight:600;" id="storyUserName">Sweety</div><div style="font-size:.72rem;color:rgba(255,255,255,.6);" id="storyTime">Just now</div></div>
+    </div>
+    <button class="story-close" onclick="closeStory()">✕</button>
+    <div class="story-bg" id="storyContent">🌸</div>
+  </div>
+</div>
+
+<!-- Post Modal -->
+<div class="post-modal" id="postModal">
+  <div class="post-form">
+    <h3>✍️ Create Post</h3>
+    <textarea id="postText" placeholder="What's on your mind? Share your thoughts, ask Sweety to help write it..."></textarea>
+    <div id="postImagePreview" style="margin-top:.6rem;"></div>
+    <div class="post-form-actions">
+      <div class="attach-row">
+        <div class="attach-icon" onclick="document.getElementById('postFileInput').click()" title="Add photo">📷</div>
+        <div class="attach-icon" onclick="aiWritePost()" title="AI write for me">🤖</div>
+      </div>
+      <div style="display:flex;gap:.5rem;">
+        <button style="background:none;border:1px solid rgba(255,255,255,.1);color:var(--muted);padding:.6rem 1rem;border-radius:50px;cursor:pointer;" onclick="closePostModal()">Cancel</button>
+        <button class="post-submit" id="postSubmitBtn" onclick="submitPost()">Post 🌸</button>
+      </div>
+    </div>
+  </div>
+</div>
+<input type="file" id="postFileInput" accept="image/*,video/*" onchange="handlePostFile(this)"/>
+
+<script>
+let storyTimer=null;
+const storyEmojis=['🌸','🌺','🎨','✨'];
+const storyNames=['Sweety','Priya','Rahul','Anita'];
+
+(async()=>{
+  const sb=getSupabase();
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){window.location.href='login.html';return;}
+})();
+
+function openStory(name,idx){
+  const modal=document.getElementById('storyModal');modal.classList.add('open');
+  document.getElementById('storyUserName').textContent=name;
+  document.getElementById('storyAvatarIcon').textContent=storyEmojis[idx]||'🌸';
+  document.getElementById('storyContent').textContent=storyEmojis[idx]||'🌸';
+  document.getElementById('storyTime').textContent='Just now';
+  const fill=document.getElementById('storyProgress');fill.style.transition='none';fill.style.width='0';
+  setTimeout(()=>{fill.style.transition='width 5s linear';fill.style.width='100%';},50);
+  storyTimer=setTimeout(closeStory,5200);
+}
+function closeStory(){clearTimeout(storyTimer);document.getElementById('storyModal').classList.remove('open');document.getElementById('storyProgress').style.width='0';}
+function openAddStory(){document.getElementById('postFileInput').click();}
+function openPostModal(){document.getElementById('postModal').classList.add('open');setTimeout(()=>document.getElementById('postText').focus(),200);}
+function closePostModal(){document.getElementById('postModal').classList.remove('open');document.getElementById('postText').value='';}
+
+function handlePostFile(input){
+  const file=input.files[0];if(!file)return;
+  const preview=document.getElementById('postImagePreview');
+  if(file.type.startsWith('image/')){
+    const img=document.createElement('img');img.src=URL.createObjectURL(file);img.style.cssText='max-width:100%;border-radius:10px;';preview.innerHTML='';preview.appendChild(img);
+  }
+}
+
+async function aiWritePost(){
+  const current=document.getElementById('postText').value;
+  const topic=current||'something inspiring about AI and community';
+  document.getElementById('postText').value='🤖 Writing with AI...';
+  try{
+    const reply=await callGroq([{role:'user',content:`Write a short, engaging social media post about: ${topic}. Keep it under 100 words. Be friendly and add relevant emojis. End with © AI Sweety`}]);
+    document.getElementById('postText').value=reply;
+  }catch{document.getElementById('postText').value=current||'';}
+}
+
+async function submitPost(){
+  const text=document.getElementById('postText').value.trim();
+  if(!text)return;
+  const btn=document.getElementById('postSubmitBtn');btn.innerHTML='<span class="spinner"></span>';btn.disabled=true;
+  // Add to feed instantly
+  const feed=document.getElementById('feed');
+  const div=document.createElement('div');div.className='post-card';
+  div.innerHTML=`<div class="post-header"><div class="post-avatar" id="myAvatar">🌸</div><div class="post-user-info"><div class="post-user-name">You</div><div class="post-meta">Just now</div></div></div><div class="post-body"><div class="post-caption">${text.replace(/\n/g,'<br/>')}</div><div class="watermark-post">© AI Sweety</div></div><div class="post-footer"><button class="action" onclick="toggleLike(this)"><span class="heart">🤍</span><span>0</span></button><button class="action">💬 <span>0</span></button><button class="action">↗️ Share</button><button class="action share-action" onclick="toggleBookmark(this)">🔖</button></div>`;
+  feed.insertBefore(div,feed.firstChild);
+  closePostModal();btn.innerHTML='Post 🌸';btn.disabled=false;
+}
+
+function toggleLike(btn){
+  btn.classList.toggle('liked');
+  const countEl=btn.querySelector('span:last-child');
+  let count=parseInt(countEl.textContent)||0;
+  btn.classList.contains('liked')?count++:count--;
+  btn.querySelector('.heart').textContent=btn.classList.contains('liked')?'❤️':'🤍';
+  countEl.textContent=Math.max(0,count);
+}
+function toggleBookmark(btn){btn.classList.toggle('bookmarked');btn.textContent=btn.classList.contains('bookmarked')?'🔖✓':'🔖';}
+function toggleFollow(btn){btn.classList.toggle('following');btn.textContent=btn.classList.contains('following')?'Following ✓':'Follow +';}
+document.getElementById('postModal').onclick=function(e){if(e.target===this)closePostModal();};
+document.getElementById('storyModal').onclick=function(e){if(e.target===this)closeStory();};
+</script>
+</body></html>

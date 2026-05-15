@@ -1,0 +1,9 @@
+# Rename this file to .gitignore before uploading to GitHub!
+# ⚠️ NEVER commit your API keys!
+api/config.js
+node_modules/
+.env
+.env.local
+.DS_Store
+Thumbs.db
+*.log

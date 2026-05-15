@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Bio — AI Sweety</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="api/config.js"></script>
+<style>
+:root{--pink:#ff6b9d;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--card:#16213e;--text:#f0f0ff;--muted:#8888aa;--success:#4dff91;--error:#ff4d4d;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+.topnav{padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);background:rgba(10,10,15,.9);backdrop-filter:blur(12px);position:sticky;top:0;z-index:10;}
+.logo{display:flex;align-items:center;gap:.5rem;font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;-webkit-text-fill-color:initial;}
+.back-btn{display:flex;align-items:center;gap:.4rem;color:var(--muted);text-decoration:none;font-size:.88rem;transition:.2s;}
+.back-btn:hover{color:var(--pink);}
+.page{max-width:600px;margin:0 auto;padding:2rem 1.5rem;}
+.page-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:.4rem;}
+.page-subtitle{color:var(--muted);font-size:.9rem;margin-bottom:2rem;}
+.card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:1.8rem;margin-bottom:1.2rem;}
+.card-title{font-size:1rem;font-weight:700;margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem;}
+.form-group{margin-bottom:1.1rem;}
+label{display:block;font-size:.82rem;font-weight:500;color:var(--muted);margin-bottom:.4rem;}
+input,textarea,select{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:.8rem 1rem;color:var(--text);font-size:.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:.2s;}
+input:focus,textarea:focus,select:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,107,157,.1);}
+input::placeholder,textarea::placeholder{color:var(--muted);}
+textarea{resize:vertical;}
+.char-count{text-align:right;font-size:.75rem;color:var(--muted);margin-top:.3rem;}
+.gender-options{display:flex;gap:.5rem;flex-wrap:wrap;}
+.gender-opt{padding:.4rem .9rem;border-radius:50px;border:1px solid rgba(255,255,255,.1);color:var(--muted);cursor:pointer;font-size:.83rem;transition:.2s;}
+.gender-opt.active{background:var(--pink);border-color:var(--pink);color:#fff;}
+.link-row{display:flex;align-items:center;gap:.6rem;}
+.link-icon{font-size:1.1rem;flex-shrink:0;}
+.skills-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem;}
+.skill-tag{display:flex;align-items:center;gap:.3rem;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.2);color:var(--text);padding:.3rem .7rem;border-radius:50px;font-size:.78rem;}
+.skill-tag .remove{cursor:pointer;color:var(--muted);font-size:.7rem;}
+.skill-input-row{display:flex;gap:.5rem;margin-top:.4rem;}
+.skill-input-row input{flex:1;}
+.skill-add-btn{padding:.6rem .9rem;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;border-radius:8px;color:#fff;cursor:pointer;font-size:.85rem;}
+.save-bar{position:sticky;bottom:0;background:var(--dark);border-top:1px solid rgba(255,255,255,.06);padding:1rem 1.5rem;display:flex;justify-content:flex-end;gap:.8rem;}
+.btn{padding:.75rem 1.5rem;border-radius:10px;font-size:.9rem;font-weight:600;cursor:pointer;border:none;transition:.2s;}
+.btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,107,157,.3);}
+.btn-ghost{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);}
+.alert{padding:.8rem 1rem;border-radius:8px;font-size:.85rem;margin-bottom:1rem;display:none;}
+.alert.success{background:rgba(77,255,145,.1);border:1px solid rgba(77,255,145,.3);color:var(--success);}
+.alert.error{background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.3);color:var(--error);}
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="logo"><div class="logo-icon">🌸</div>AI Sweety</a>
+  <a href="profile.html" class="back-btn">← Back to Profile</a>
+</nav>
+
+<div class="page">
+  <h1 class="page-title">Edit Your Bio</h1>
+  <p class="page-subtitle">Tell the world who you are 🌸</p>
+  <div class="alert success" id="successAlert">Bio saved successfully! 🌸</div>
+  <div class="alert error" id="errorAlert"></div>
+
+  <!-- Basic Info -->
+  <div class="card">
+    <div class="card-title">👤 Basic Information</div>
+    <div class="form-group"><label>Full Name</label><input type="text" id="fullName" placeholder="Your full name"/></div>
+    <div class="form-group"><label>Username</label><input type="text" id="username" placeholder="@username"/></div>
+    <div class="form-group">
+      <label>Bio <span style="color:var(--pink)">*</span></label>
+      <textarea id="bio" rows="4" maxlength="200" placeholder="Tell people about yourself..." oninput="document.getElementById('bioCount').textContent=this.value.length+'/200'"></textarea>
+      <div class="char-count" id="bioCount">0/200</div>
+    </div>
+    <div class="form-group"><label>Date of Birth</label><input type="date" id="dob"/></div>
+    <div class="form-group">
+      <label>Gender</label>
+      <div class="gender-options">
+        <span class="gender-opt" onclick="selectGender('male',this)">♂️ Male</span>
+        <span class="gender-opt" onclick="selectGender('female',this)">♀️ Female</span>
+        <span class="gender-opt" onclick="selectGender('nonbinary',this)">⚧ Non-binary</span>
+        <span class="gender-opt" onclick="selectGender('prefer-not',this)">🤐 Prefer not to say</span>
+      </div>
+    </div>
+    <div class="form-group"><label>Location</label><input type="text" id="location" placeholder="City, Country"/></div>
+    <div class="form-group"><label>Website</label><input type="url" id="website" placeholder="https://yoursite.com"/></div>
+  </div>
+
+  <!-- Professional Info -->
+  <div class="card">
+    <div class="card-title">💼 Professional Info</div>
+    <div class="form-group"><label>Occupation / Job Title</label><input type="text" id="occupation" placeholder="e.g. Software Engineer, Lawyer, Student"/></div>
+    <div class="form-group"><label>Company / Organization</label><input type="text" id="company" placeholder="Where do you work?"/></div>
+    <div class="form-group">
+      <label>Field / Industry</label>
+      <select id="industry">
+        <option value="">Select your field</option>
+        <option value="it">💻 IT & Technology</option>
+        <option value="legal">⚖️ Legal</option>
+        <option value="medical">🏥 Medical</option>
+        <option value="education">📚 Education</option>
+        <option value="finance">💰 Finance</option>
+        <option value="creative">🎨 Creative Arts</option>
+        <option value="business">🏢 Business</option>
+        <option value="student">🎓 Student</option>
+        <option value="other">🌐 Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Skills</label>
+      <div class="skills-tags" id="skillsTags"></div>
+      <div class="skill-input-row">
+        <input type="text" id="skillInput" placeholder="Add a skill..." onkeydown="if(event.key==='Enter'){event.preventDefault();addSkill();}"/>
+        <button class="skill-add-btn" onclick="addSkill()">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Social Links -->
+  <div class="card">
+    <div class="card-title">🔗 Social Links</div>
+    <div class="form-group"><label>Instagram</label><div class="link-row"><span class="link-icon">📸</span><input type="text" id="instaLink" placeholder="@yourusername"/></div></div>
+    <div class="form-group"><label>LinkedIn</label><div class="link-row"><span class="link-icon">💼</span><input type="url" id="linkedinLink" placeholder="linkedin.com/in/yourname"/></div></div>
+    <div class="form-group"><label>GitHub</label><div class="link-row"><span class="link-icon">🐙</span><input type="text" id="githubLink" placeholder="github.com/yourname"/></div></div>
+    <div class="form-group"><label>Twitter / X</label><div class="link-row"><span class="link-icon">🐦</span><input type="text" id="twitterLink" placeholder="@yourhandle"/></div></div>
+  </div>
+
+  <!-- Language & Preferences -->
+  <div class="card">
+    <div class="card-title">🌐 Language & Preferences</div>
+    <div class="form-group">
+      <label>Preferred Language for Sweety Responses</label>
+      <select id="prefLang">
+        <option value="en">🇬🇧 English</option><option value="hi">🇮🇳 हिंदी</option><option value="ta">🇮🇳 தமிழ்</option>
+        <option value="te">🇮🇳 తెలుగు</option><option value="kn">🇮🇳 ಕನ್ನಡ</option><option value="ml">🇮🇳 മലയാളം</option>
+        <option value="mr">🇮🇳 मराठी</option><option value="bn">🇧🇩 বাংলা</option><option value="fr">🇫🇷 Français</option>
+        <option value="es">🇪🇸 Español</option><option value="ar">🇸🇦 العربية</option><option value="zh">🇨🇳 中文</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Mobile Number</label><input type="tel" id="mobile" placeholder="+91 9876543210"/></div>
+  </div>
+</div>
+
+<div class="save-bar">
+  <a href="profile.html" class="btn btn-ghost">Cancel</a>
+  <button class="btn btn-primary" id="saveBtn" onclick="saveBio()">💾 Save Bio</button>
+</div>
+
+<script>
+let selectedGender='';
+let skills=[];
+
+function selectGender(val,el){selectedGender=val;document.querySelectorAll('.gender-opt').forEach(o=>o.classList.remove('active'));el.classList.add('active');}
+function addSkill(){
+  const input=document.getElementById('skillInput');
+  const val=input.value.trim();if(!val||skills.includes(val))return;
+  skills.push(val);renderSkills();input.value='';
+}
+function removeSkill(s){skills=skills.filter(x=>x!==s);renderSkills();}
+function renderSkills(){
+  const container=document.getElementById('skillsTags');
+  container.innerHTML=skills.map(s=>`<div class="skill-tag">${s}<span class="remove" onclick="removeSkill('${s}')">✕</span></div>`).join('');
+}
+
+(async()=>{
+  const sb=getSupabase();
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){window.location.href='login.html';return;}
+  const {data:p}=await sb.from('profiles').select('*').eq('id',session.user.id).single();
+  if(p){
+    ['fullName','username','bio','dob','location','website','occupation','company','mobile'].forEach(id=>{
+      const key={fullName:'full_name',username:'username',bio:'bio',dob:'dob',location:'location',website:'website',occupation:'occupation',company:'company',mobile:'mobile'}[id];
+      if(p[key])document.getElementById(id).value=p[key];
+    });
+    if(p.gender)selectGender(p.gender,document.querySelector(`[onclick="selectGender('${p.gender}',this)"]`)||document.createElement('span'));
+    if(p.industry)document.getElementById('industry').value=p.industry;
+    if(p.preferred_lang)document.getElementById('prefLang').value=p.preferred_lang;
+    if(p.skills)try{skills=JSON.parse(p.skills);renderSkills();}catch{}
+    if(p.social_links)try{const s=JSON.parse(p.social_links);Object.entries(s).forEach(([k,v])=>{const el=document.getElementById(k+'Link');if(el)el.value=v;});}catch{}
+    if(p.bio)document.getElementById('bioCount').textContent=p.bio.length+'/200';
+  }
+})();
+
+async function saveBio(){
+  const sb=getSupabase();
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session)return;
+  const btn=document.getElementById('saveBtn');
+  btn.innerHTML='<span class="spinner"></span> Saving...';btn.disabled=true;
+  const updates={
+    full_name:document.getElementById('fullName').value,
+    username:document.getElementById('username').value.replace('@',''),
+    bio:document.getElementById('bio').value,
+    dob:document.getElementById('dob').value,
+    gender:selectedGender,
+    location:document.getElementById('location').value,
+    website:document.getElementById('website').value,
+    occupation:document.getElementById('occupation').value,
+    company:document.getElementById('company').value,
+    industry:document.getElementById('industry').value,
+    skills:JSON.stringify(skills),
+    mobile:document.getElementById('mobile').value,
+    preferred_lang:document.getElementById('prefLang').value,
+    social_links:JSON.stringify({insta:document.getElementById('instaLink').value,linkedin:document.getElementById('linkedinLink').value,github:document.getElementById('githubLink').value,twitter:document.getElementById('twitterLink').value}),
+    updated_at:new Date().toISOString()
+  };
+  const {error}=await sb.from('profiles').update(updates).eq('id',session.user.id);
+  if(error){document.getElementById('errorAlert').textContent=error.message;document.getElementById('errorAlert').style.display='block';}
+  else{document.getElementById('successAlert').style.display='block';setTimeout(()=>document.getElementById('successAlert').style.display='none',3000);}
+  btn.innerHTML='💾 Save Bio';btn.disabled=false;
+}
+</script>
+</body></html>
