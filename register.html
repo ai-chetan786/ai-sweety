@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Register — AI Sweety</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="api/config.js"></script>
+<!-- ✅ Supabase MUST load first -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{--pink:#ff6b9d;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--card:#16213e;--text:#f0f0ff;--muted:#8888aa;--error:#ff4d4d;--success:#4dff91;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -32,7 +32,7 @@ select option{background:var(--dark2);color:var(--text);}
 .input-icon input{padding-left:2.8rem;}
 .input-icon .icon{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;}
 .password-wrap{position:relative;}
-.password-wrap input{padding-right:3rem;}
+.password-wrap input{padding-right:3rem;width:100%;}
 .toggle-pw{position:absolute;right:.9rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:var(--muted);}
 .strength-bar{height:4px;border-radius:2px;margin-top:.5rem;transition:all .3s;background:rgba(255,255,255,.1);}
 .strength-text{font-size:.75rem;color:var(--muted);margin-top:.3rem;}
@@ -47,15 +47,12 @@ select option{background:var(--dark2);color:var(--text);}
 .btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
 .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,107,157,.4);}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed;}
-.divider{text-align:center;color:var(--muted);font-size:.85rem;margin:1.2rem 0;position:relative;}
-.divider::before,.divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:rgba(255,255,255,.08);}
-.divider::before{left:0;}.divider::after{right:0;}
 .login-link{text-align:center;margin-top:1.2rem;font-size:.9rem;color:var(--muted);}
 .login-link a{color:var(--pink);text-decoration:none;font-weight:600;}
 .alert{padding:.9rem 1rem;border-radius:10px;font-size:.88rem;margin-bottom:1rem;display:none;}
 .alert.error{background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.3);color:var(--error);}
 .alert.success{background:rgba(77,255,145,.1);border:1px solid rgba(77,255,145,.3);color:var(--success);}
-.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
@@ -70,11 +67,11 @@ select option{background:var(--dark2);color:var(--text);}
     <div class="alert success" id="successMsg"></div>
     <div class="form-group">
       <label>Full Name</label>
-      <div class="input-icon"><span class="icon">👤</span><input type="text" id="fullName" placeholder="Your full name" autocomplete="name"/></div>
+      <div class="input-icon"><span class="icon">👤</span><input type="text" id="fullName" placeholder="Your full name"/></div>
     </div>
     <div class="form-group">
       <label>Gmail Address</label>
-      <div class="input-icon"><span class="icon">📧</span><input type="email" id="email" placeholder="you@gmail.com" autocomplete="email"/></div>
+      <div class="input-icon"><span class="icon">📧</span><input type="email" id="email" placeholder="you@gmail.com"/></div>
     </div>
     <div class="form-group">
       <label>Mobile Number</label>
@@ -83,7 +80,7 @@ select option{background:var(--dark2);color:var(--text);}
     <div class="form-group">
       <label>Password</label>
       <div class="password-wrap">
-        <input type="password" id="password" placeholder="Min 8 characters" autocomplete="new-password" oninput="checkStrength(this.value)"/>
+        <input type="password" id="password" placeholder="Min 8 characters" oninput="checkStrength(this.value)"/>
         <button class="toggle-pw" onclick="togglePw('password')" type="button">👁️</button>
       </div>
       <div class="strength-bar" id="strengthBar"></div>
@@ -92,7 +89,7 @@ select option{background:var(--dark2);color:var(--text);}
     <div class="form-group">
       <label>Confirm Password</label>
       <div class="password-wrap">
-        <input type="password" id="confirmPassword" placeholder="Repeat password" autocomplete="new-password"/>
+        <input type="password" id="confirmPassword" placeholder="Repeat password"/>
         <button class="toggle-pw" onclick="togglePw('confirmPassword')" type="button">👁️</button>
       </div>
     </div>
@@ -107,7 +104,6 @@ select option{background:var(--dark2);color:var(--text);}
         <span class="lang-opt" data-lang="ml">മലയാളം</span>
         <span class="lang-opt" data-lang="mr">मराठी</span>
         <span class="lang-opt" data-lang="bn">বাংলা</span>
-        <span class="lang-opt" data-lang="gu">ગુજરાતી</span>
         <span class="lang-opt" data-lang="fr">Français</span>
         <span class="lang-opt" data-lang="es">Español</span>
         <span class="lang-opt" data-lang="ar">العربية</span>
@@ -122,12 +118,22 @@ select option{background:var(--dark2);color:var(--text);}
     <div class="login-link">Already have an account? <a href="login.html">Sign in →</a></div>
   </div>
 </div>
+
 <script>
+// ── CONFIG — paste your keys here ──────────────────────────
+const SUPABASE_URL      = "https://bonenmlzfzctwjwquouz.supabase.co/rest/v1/";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvbmVubWx6ZnpjdHdqd3F1b3V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3OTMzMTQsImV4cCI6MjA5NDM2OTMxNH0.0h1r-396MV6TRugr5sGGTvjeL4by0dEizpdOnnje65k";
+// ───────────────────────────────────────────────────────────
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 let selectedLang = 'en';
 document.querySelectorAll('.lang-opt').forEach(o=>{
   o.onclick=()=>{document.querySelectorAll('.lang-opt').forEach(x=>x.classList.remove('active'));o.classList.add('active');selectedLang=o.dataset.lang;};
 });
+
 function togglePw(id){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';}
+
 function checkStrength(pw){
   const bar=document.getElementById('strengthBar'),txt=document.getElementById('strengthText');
   let score=0;
@@ -139,12 +145,14 @@ function checkStrength(pw){
   txt.textContent=pw?labels[score-1]||'':'';
   txt.style.color=colors[score-1]||'var(--muted)';
 }
+
 function showAlert(type,msg){
   document.getElementById('errorMsg').style.display='none';
   document.getElementById('successMsg').style.display='none';
   const el=document.getElementById(type==='error'?'errorMsg':'successMsg');
   el.textContent=msg;el.style.display='block';
 }
+
 async function register(){
   const name=document.getElementById('fullName').value.trim();
   const email=document.getElementById('email').value.trim();
@@ -152,26 +160,47 @@ async function register(){
   const password=document.getElementById('password').value;
   const confirm=document.getElementById('confirmPassword').value;
   const termsChecked=document.getElementById('terms').checked;
-  if(!name||!email||!mobile||!password||!confirm){return showAlert('error','Please fill all fields.');}
-  if(!email.includes('@')){return showAlert('error','Please enter a valid Gmail address.');}
-  if(password.length<8){return showAlert('error','Password must be at least 8 characters.');}
-  if(password!==confirm){return showAlert('error','Passwords do not match.');}
-  if(!termsChecked){return showAlert('error','Please accept the Terms of Service.');}
+
+  if(!name||!email||!mobile||!password||!confirm)return showAlert('error','Please fill all fields.');
+  if(!email.includes('@'))return showAlert('error','Please enter a valid Gmail address.');
+  if(password.length<8)return showAlert('error','Password must be at least 8 characters.');
+  if(password!==confirm)return showAlert('error','Passwords do not match.');
+  if(!termsChecked)return showAlert('error','Please accept the Terms of Service.');
+
   const btn=document.getElementById('registerBtn');
   btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Creating account...';
+
   try{
-    const sb=getSupabase();
-    const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:name,mobile,preferred_lang:selectedLang}}});
+    const {data,error}=await sb.auth.signUp({
+      email,
+      password,
+      options:{data:{full_name:name,mobile,preferred_lang:selectedLang}}
+    });
     if(error)throw error;
-    // Insert profile
+
     if(data.user){
-      await sb.from('profiles').insert({id:data.user.id,full_name:name,email,mobile,preferred_lang:selectedLang,created_at:new Date().toISOString()});
+      await sb.from('profiles').upsert({
+        id:data.user.id,
+        full_name:name,
+        email,
+        mobile,
+        preferred_lang:selectedLang,
+        created_at:new Date().toISOString()
+      });
     }
-    showAlert('success','Account created! Please check your email to verify your account. 🌸');
-    setTimeout(()=>window.location.href='login.html',3000);
+    showAlert('success','✅ Account created! Please check your Gmail to verify, then login. 🌸');
+    setTimeout(()=>window.location.href='login.html',4000);
   }catch(err){
     showAlert('error',err.message||'Registration failed. Please try again.');
-  }finally{btn.disabled=false;btn.innerHTML='🌸 Create Account';}
+  }finally{
+    btn.disabled=false;btn.innerHTML='🌸 Create Account';
+  }
 }
+
+// Auto redirect if already logged in
+(async()=>{
+  const {data:{session}}=await sb.auth.getSession();
+  if(session)window.location.href='chat.html';
+})();
 </script>
 </body></html>
