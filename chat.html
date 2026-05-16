@@ -5,92 +5,72 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Chat — AI Sweety</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="api/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
-:root{--pink:#ff6b9d;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--dark3:#1a1a2e;--card:#16213e;--text:#f0f0ff;--muted:#8888aa;--sidebar:220px;}
+:root{--pink:#ff6b9d;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--dark3:#1a1a2e;--card:#16213e;--text:#f0f0ff;--muted:#8888aa;}
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;overflow:hidden;}
 body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;display:flex;}
-
-/* ── SIDEBAR ── */
-.sidebar{width:var(--sidebar);background:var(--dark2);border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;flex-shrink:0;height:100vh;}
+.sidebar{width:220px;background:var(--dark2);border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;flex-shrink:0;height:100vh;}
 .sidebar-logo{padding:1.2rem 1rem;display:flex;align-items:center;gap:.6rem;border-bottom:1px solid rgba(255,255,255,.05);}
 .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
 .logo-text{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.new-chat-btn{margin:1rem;padding:.7rem 1rem;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;border-radius:10px;color:#fff;font-size:.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.5rem;transition:.2s;}
-.new-chat-btn:hover{opacity:.9;}
+.new-chat-btn{margin:1rem;padding:.7rem 1rem;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;border-radius:10px;color:#fff;font-size:.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.5rem;}
 .sidebar-section{padding:.5rem 1rem .3rem;font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
 .chat-history{flex:1;overflow-y:auto;padding:0 .5rem;}
-.chat-history::-webkit-scrollbar{width:3px;}
-.chat-history::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
-.history-item{padding:.65rem .8rem;border-radius:8px;cursor:pointer;font-size:.83rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:.2s;display:flex;align-items:center;gap:.5rem;}
-.history-item:hover,.history-item.active{background:rgba(255,107,157,.1);color:var(--text);}
-.history-item .h-icon{font-size:.9rem;flex-shrink:0;}
+.history-item{padding:.65rem .8rem;border-radius:8px;cursor:pointer;font-size:.83rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:.5rem;}
+.history-item:hover{background:rgba(255,107,157,.1);color:var(--text);}
 .sidebar-bottom{padding:1rem;border-top:1px solid rgba(255,255,255,.05);}
-.user-mini{display:flex;align-items:center;gap:.7rem;padding:.6rem;border-radius:10px;cursor:pointer;transition:.2s;text-decoration:none;}
+.user-mini{display:flex;align-items:center;gap:.7rem;padding:.6rem;border-radius:10px;cursor:pointer;text-decoration:none;}
 .user-mini:hover{background:rgba(255,255,255,.05);}
-.user-avatar-sm{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;overflow:hidden;}
-.user-avatar-sm img{width:100%;height:100%;object-fit:cover;}
-.user-info-sm{overflow:hidden;}
-.user-name-sm{font-size:.82rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-avatar-sm{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;}
+.user-name-sm{font-size:.82rem;font-weight:600;color:var(--text);}
 .user-role-sm{font-size:.72rem;color:var(--muted);}
 .sidebar-nav{padding:.5rem;}
-.nav-item{display:flex;align-items:center;gap:.7rem;padding:.65rem .8rem;border-radius:8px;cursor:pointer;font-size:.85rem;color:var(--muted);transition:.2s;text-decoration:none;}
+.nav-item{display:flex;align-items:center;gap:.7rem;padding:.65rem .8rem;border-radius:8px;font-size:.85rem;color:var(--muted);text-decoration:none;transition:.2s;}
 .nav-item:hover{background:rgba(255,255,255,.05);color:var(--text);}
 .nav-item.active{background:rgba(255,107,157,.1);color:var(--pink);}
-
-/* ── MAIN ── */
 .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
 .top-bar{padding:.9rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.top-bar-left{display:flex;align-items:center;gap.8rem;}
 .model-badge{background:rgba(255,107,157,.1);border:1px solid rgba(255,107,157,.2);color:var(--pink);padding:.3rem .8rem;border-radius:50px;font-size:.75rem;font-weight:600;}
 .top-actions{display:flex;align-items:center;gap:.5rem;}
 .icon-btn{width:34px;height:34px;border-radius:8px;background:none;border:1px solid rgba(255,255,255,.1);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:.2s;}
 .icon-btn:hover{border-color:var(--pink);color:var(--pink);}
-.lang-pill{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:.3rem .8rem;font-size:.78rem;color:var(--muted);cursor:pointer;}
-
-/* ── CHAT AREA ── */
+.lang-pill{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:.3rem .8rem;font-size:.78rem;color:var(--text);cursor:pointer;outline:none;}
 .chat-area{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1.2rem;}
-.chat-area::-webkit-scrollbar{width:4px;}
-.chat-area::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
 .welcome-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;}
-.welcome-screen .big-logo{font-size:4rem;margin-bottom:1rem;animation:pulse 2s ease infinite;}
+.big-logo{font-size:4rem;margin-bottom:1rem;animation:pulse 2s ease infinite;}
 @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
 .welcome-screen h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:.5rem;}
 .welcome-screen p{color:var(--muted);font-size:.95rem;max-width:400px;line-height:1.7;}
 .suggestion-chips{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:1.5rem;}
 .chip{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:.5rem 1rem;font-size:.82rem;cursor:pointer;transition:.2s;color:var(--text);}
-.chip:hover{border-color:var(--pink);color:var(--pink);background:rgba(255,107,157,.06);}
-
-/* ── MESSAGES ── */
+.chip:hover{border-color:var(--pink);color:var(--pink);}
 .msg{display:flex;gap:.9rem;max-width:80%;animation:msgIn .3s ease;}
 @keyframes msgIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 .msg.user{align-self:flex-end;flex-direction:row-reverse;}
-.msg-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;overflow:hidden;}
+.msg-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
 .msg.sweety .msg-avatar{background:linear-gradient(135deg,var(--pink),var(--purple));}
 .msg.user .msg-avatar{background:rgba(255,255,255,.1);}
-.msg-avatar img{width:100%;height:100%;object-fit:cover;}
-.msg-bubble{background:rgba(255,255,255,.05);border-radius:16px;padding:.9rem 1.1rem;font-size:.9rem;line-height:1.7;position:relative;}
+.msg-bubble{border-radius:16px;padding:.9rem 1.1rem;font-size:.9rem;line-height:1.7;}
 .msg.sweety .msg-bubble{background:rgba(255,107,157,.08);border:1px solid rgba(255,107,157,.12);border-top-left-radius:4px;}
 .msg.user .msg-bubble{background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.2);border-top-right-radius:4px;}
-.watermark{font-size:.72rem;color:var(--pink);margin-top:.5rem;opacity:.7;display:flex;align-items:center;gap:.3rem;}
+.watermark{font-size:.72rem;color:var(--pink);margin-top:.5rem;opacity:.7;}
 .msg-time{font-size:.7rem;color:var(--muted);margin-top:.4rem;}
 .msg-image{max-width:300px;border-radius:12px;margin-top:.5rem;border:1px solid rgba(255,255,255,.1);}
-.msg-file{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.4rem .8rem;font-size:.82rem;margin-top:.5rem;text-decoration:none;color:var(--text);}
 .typing-indicator{display:flex;gap:4px;align-items:center;padding:.5rem;}
 .typing-indicator span{width:7px;height:7px;border-radius:50%;background:var(--pink);animation:typing .9s ease infinite;}
 .typing-indicator span:nth-child(2){animation-delay:.15s;}
 .typing-indicator span:nth-child(3){animation-delay:.3s;}
 @keyframes typing{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
-
-/* ── INPUT AREA ── */
 .input-area{padding:1rem 1.5rem 1.2rem;border-top:1px solid rgba(255,255,255,.05);flex-shrink:0;}
 .upload-preview{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem;}
 .upload-thumb{position:relative;width:56px;height:56px;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.1);}
 .upload-thumb img{width:100%;height:100%;object-fit:cover;}
-.upload-thumb .remove-thumb{position:absolute;top:2px;right:2px;width:16px;height:16px;background:rgba(0,0,0,.7);border-radius:50%;border:none;color:#fff;font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.file-chip{display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.3rem .6rem;font-size:.78rem;}
+.remove-thumb{position:absolute;top:2px;right:2px;width:16px;height:16px;background:rgba(0,0,0,.7);border-radius:50%;border:none;color:#fff;font-size:.6rem;cursor:pointer;}
+.mode-tabs{display:flex;gap:.4rem;margin-bottom:.7rem;}
+.mode-tab{padding:.3rem .8rem;border-radius:50px;font-size:.78rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);color:var(--muted);background:none;transition:.2s;}
+.mode-tab.active{background:linear-gradient(135deg,var(--pink),var(--purple));border-color:transparent;color:#fff;}
 .input-box{display:flex;align-items:flex-end;gap:.6rem;background:var(--dark2);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:.5rem .5rem .5rem 1rem;transition:.2s;}
 .input-box:focus-within{border-color:var(--pink);}
 .input-box textarea{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:.92rem;font-family:'DM Sans',sans-serif;resize:none;max-height:140px;line-height:1.5;padding:.4rem 0;}
@@ -102,15 +82,13 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
 .send-btn{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
 .send-btn:hover:not(:disabled){transform:scale(1.05);}
 .send-btn:disabled{opacity:.4;cursor:not-allowed;}
-.mode-tabs{display:flex;gap:.4rem;margin-bottom:.7rem;}
-.mode-tab{padding:.3rem .8rem;border-radius:50px;font-size:.78rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);color:var(--muted);transition:.2s;background:none;}
-.mode-tab.active{background:linear-gradient(135deg,var(--pink),var(--purple));border-color:transparent;color:#fff;}
-#fileInput{display:none;}
-
-/* ── MOBILE ── */
+#fileInput,#cameraInput{display:none;}
+.loading-keys{position:fixed;inset:0;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:1rem;}
+.loading-keys .spin{width:40px;height:40px;border:3px solid rgba(255,107,157,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 .menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;}
 @media(max-width:700px){
-  .sidebar{position:fixed;left:-var(--sidebar);z-index:200;transition:.3s;left:-220px;}
+  .sidebar{position:fixed;left:-220px;z-index:200;transition:.3s;}
   .sidebar.open{left:0;}
   .menu-toggle{display:flex;}
   .msg{max-width:92%;}
@@ -118,7 +96,13 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
 </style>
 </head>
 <body>
-<!-- SIDEBAR -->
+
+<!-- Loading screen while keys are fetched -->
+<div class="loading-keys" id="loadingScreen">
+  <div class="spin"></div>
+  <div style="color:var(--muted);font-size:.9rem;">Starting AI Sweety... 🌸</div>
+</div>
+
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <div class="logo-icon">🌸</div>
@@ -131,16 +115,11 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
     <a href="profile.html" class="nav-item">👤 Profile</a>
   </nav>
   <div class="sidebar-section">Recent Chats</div>
-  <div class="chat-history" id="chatHistory">
-    <div class="history-item"><span class="h-icon">💬</span>How to fix CORS error</div>
-    <div class="history-item"><span class="h-icon">⚖️</span>Tenant rights help</div>
-    <div class="history-item"><span class="h-icon">🎨</span>Generate sunset art</div>
-    <div class="history-item"><span class="h-icon">📰</span>Latest AI news</div>
-  </div>
+  <div class="chat-history" id="chatHistory"></div>
   <div class="sidebar-bottom">
-    <a href="profile.html" class="user-mini" id="userMini">
-      <div class="user-avatar-sm" id="sidebarAvatar">🌸</div>
-      <div class="user-info-sm">
+    <a href="profile.html" class="user-mini">
+      <div class="user-avatar-sm">🌸</div>
+      <div>
         <div class="user-name-sm" id="sidebarName">Loading...</div>
         <div class="user-role-sm">Sweety Member</div>
       </div>
@@ -148,15 +127,14 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
   </div>
 </aside>
 
-<!-- MAIN -->
 <div class="main">
   <div class="top-bar">
     <div style="display:flex;align-items:center;gap:.8rem;">
-      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
       <span class="model-badge">🤖 Groq · Llama3-70B</span>
     </div>
     <div class="top-actions">
-      <select class="lang-pill" id="langSelect" onchange="changeLang(this.value)">
+      <select class="lang-pill" id="langSelect" onchange="currentLang=this.value">
         <option value="en">🌐 English</option>
         <option value="hi">हिंदी</option>
         <option value="ta">தமிழ்</option>
@@ -170,7 +148,7 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
         <option value="ar">العربية</option>
         <option value="zh">中文</option>
       </select>
-      <button class="icon-btn" onclick="clearChat()" title="Clear chat">🗑️</button>
+      <button class="icon-btn" onclick="newChat()" title="New Chat">🗑️</button>
       <button class="icon-btn" onclick="logout()" title="Logout">🚪</button>
     </div>
   </div>
@@ -179,185 +157,318 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
     <div class="welcome-screen" id="welcomeScreen">
       <div class="big-logo">🌸</div>
       <h2>Hi! I'm <span style="color:var(--pink)">Sweety</span> 💕</h2>
-      <p>Your all-in-one AI companion. Ask me anything — chat, images, legal help, IT support, live news and more!</p>
+      <p>Your all-in-one AI companion. Ask me anything!</p>
       <div class="suggestion-chips">
-        <span class="chip" onclick="usePrompt('Help me with a legal problem')">⚖️ Legal Help</span>
+        <span class="chip" onclick="usePrompt('Help me understand my legal rights as a tenant')">⚖️ Legal Help</span>
         <span class="chip" onclick="usePrompt('Generate an image of a beautiful sunset over mountains')">🎨 Generate Image</span>
         <span class="chip" onclick="usePrompt('What are the latest AI news today?')">📰 Latest News</span>
-        <span class="chip" onclick="usePrompt('Help me debug my Python code')">💻 IT / Code Help</span>
-        <span class="chip" onclick="usePrompt('Write me a social media post for Instagram')">📸 Social Media</span>
-        <span class="chip" onclick="usePrompt('Tell me a motivational story')">✨ Inspire Me</span>
+        <span class="chip" onclick="usePrompt('Help me debug my Python code')">💻 IT Help</span>
+        <span class="chip" onclick="usePrompt('Write me a creative Instagram caption')">📸 Social Media</span>
+        <span class="chip" onclick="usePrompt('Tell me something motivational')">✨ Inspire Me</span>
       </div>
     </div>
   </div>
 
   <div class="input-area">
     <div class="mode-tabs">
-      <button class="mode-tab active" onclick="setMode('chat')" id="modeChatBtn">💬 Chat</button>
-      <button class="mode-tab" onclick="setMode('image')" id="modeImgBtn">🎨 Image Gen</button>
-      <button class="mode-tab" onclick="setMode('news')" id="modeNewsBtn">📰 News Search</button>
+      <button class="mode-tab active" onclick="setMode('chat',this)">💬 Chat</button>
+      <button class="mode-tab" onclick="setMode('image',this)">🎨 Image Gen</button>
+      <button class="mode-tab" onclick="setMode('news',this)">📰 News Search</button>
     </div>
     <div class="upload-preview" id="uploadPreview"></div>
     <div class="input-box">
-      <textarea id="msgInput" placeholder="Ask Sweety anything..." rows="1" oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
+      <textarea id="msgInput" placeholder="Ask Sweety anything..." rows="1"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,140)+'px'"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
       <div class="input-actions">
-        <button class="attach-btn" onclick="document.getElementById('fileInput').click()" title="Upload photo/file">📎</button>
+        <button class="attach-btn" onclick="document.getElementById('fileInput').click()" title="Upload file">📎</button>
         <button class="attach-btn" onclick="document.getElementById('cameraInput').click()" title="Camera">📷</button>
         <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
       </div>
     </div>
-    <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx,.txt" onchange="handleFileUpload(this)"/>
-    <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleFileUpload(this)"/>
+    <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx,.txt" onchange="handleFile(this)"/>
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleFile(this)"/>
   </div>
 </div>
 
 <script>
-let messages=[];
-let mode='chat';
-let uploadedFiles=[];
-let currentUser=null;
-let currentLang='en';
+// ── ALL KEYS LOADED SAFELY FROM VERCEL /api/env ──────────
+// ✅ Zero keys in this file — 100% safe for GitHub!
+let SUPABASE_URL = '';
+let SUPABASE_ANON_KEY = '';
+let GROQ_API_KEY = '';
+let OPENROUTER_KEY = '';
+let TAVILY_KEY = '';
+let HF_KEY = '';
+let sb = null;
 
-// ── INIT ──
-(async()=>{
-  const sb=getSupabase();
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='login.html';return;}
-  currentUser=session.user;
-  const name=currentUser.user_metadata?.full_name||currentUser.email.split('@')[0];
-  document.getElementById('sidebarName').textContent=name;
-  currentLang=currentUser.user_metadata?.preferred_lang||localStorage.getItem('sweety_lang')||'en';
-  document.getElementById('langSelect').value=currentLang;
-  loadHistory();
-})();
+let messages = [];
+let mode = 'chat';
+let currentLang = 'en';
+let uploadedFiles = [];
+let currentUser = null;
 
-function changeLang(lang){currentLang=lang;localStorage.setItem('sweety_lang',lang);}
-function setMode(m){
-  mode=m;
-  document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('mode'+m.charAt(0).toUpperCase()+m.slice(1)+'Btn').classList.add('active');
-  const ph={chat:'Ask Sweety anything...',image:'Describe the image you want to create...',news:'Search for latest news...'};
-  document.getElementById('msgInput').placeholder=ph[m];
+// ── STEP 1: Fetch keys from Vercel, then init everything ──
+async function boot() {
+  try {
+    const res = await fetch('/api/env');
+    if (!res.ok) throw new Error('Could not load config');
+    const keys = await res.json();
+
+    SUPABASE_URL      = keys.SUPABASE_URL;
+    SUPABASE_ANON_KEY = keys.SUPABASE_ANON_KEY;
+    GROQ_API_KEY      = keys.GROQ_API_KEY;
+    OPENROUTER_KEY    = keys.OPENROUTER_API_KEY;
+    TAVILY_KEY        = keys.TAVILY_API_KEY;
+    HF_KEY            = keys.HF_API_KEY;
+
+    // Init Supabase with real keys
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Check login
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+
+    currentUser = session.user;
+    const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
+    document.getElementById('sidebarName').textContent = name;
+    currentLang = currentUser.user_metadata?.preferred_lang || 'en';
+    document.getElementById('langSelect').value = currentLang;
+
+    // Hide loading screen
+    document.getElementById('loadingScreen').style.display = 'none';
+
+  } catch (err) {
+    document.getElementById('loadingScreen').innerHTML =
+      `<div style="color:#ff4d4d;text-align:center;padding:2rem;">
+        ❌ Failed to load config<br/>
+        <small style="color:var(--muted)">${err.message}</small><br/><br/>
+        <small>Make sure api/env.js is deployed on Vercel</small>
+      </div>`;
+  }
 }
-function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
-function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';}
-function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
-function usePrompt(text){document.getElementById('msgInput').value=text;document.getElementById('welcomeScreen')&&(document.getElementById('welcomeScreen').style.display='none');sendMessage();}
-function clearChat(){messages=[];document.getElementById('chatArea').innerHTML='<div class="welcome-screen" id="welcomeScreen"><div class="big-logo">🌸</div><h2>Hi! I\'m <span style="color:var(--pink)">Sweety</span> 💕</h2><p>Ask me anything!</p></div>';}
-function newChat(){clearChat();document.getElementById('msgInput').value='';}
+boot();
 
-function handleFileUpload(input){
-  const preview=document.getElementById('uploadPreview');
-  Array.from(input.files).forEach(file=>{
-    uploadedFiles.push(file);
-    const div=document.createElement('div');
-    div.className='upload-thumb';
-    if(file.type.startsWith('image/')){
-      const img=document.createElement('img');
-      img.src=URL.createObjectURL(file);
-      div.appendChild(img);
-    }else{
-      div.innerHTML=`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:.7rem;text-align:center;padding:4px;color:var(--muted);">📄 ${file.name.substring(0,8)}</div>`;
+// ── GROQ AI ───────────────────────────────────────────────
+async function callGroq(msgs, sysprompt) {
+  try {
+    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'llama3-70b-8192',
+        messages: [{ role: 'system', content: sysprompt }, ...msgs],
+        max_tokens: 2048,
+        temperature: 0.7
+      })
+    });
+    if (!r.ok) throw new Error('Groq failed');
+    const d = await r.json();
+    return d.choices[0].message.content;
+  } catch (e) {
+    console.warn('Groq failed, trying OpenRouter...', e);
+    return await callOpenRouter(msgs, sysprompt);
+  }
+}
+
+// ── OPENROUTER FALLBACK ───────────────────────────────────
+async function callOpenRouter(msgs, sysprompt) {
+  const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${OPENROUTER_KEY}`,
+      'HTTP-Referer': window.location.origin,
+      'X-Title': 'AI Sweety'
+    },
+    body: JSON.stringify({
+      model: 'mistralai/mistral-7b-instruct',
+      messages: [{ role: 'system', content: sysprompt }, ...msgs]
+    })
+  });
+  const d = await r.json();
+  return d.choices[0].message.content;
+}
+
+// ── TAVILY NEWS SEARCH ────────────────────────────────────
+async function searchWeb(query) {
+  const r = await fetch('https://api.tavily.com/search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ api_key: TAVILY_KEY, query, search_depth: 'basic', max_results: 5 })
+  });
+  const d = await r.json();
+  return d.results || [];
+}
+
+// ── HUGGING FACE IMAGE GEN ────────────────────────────────
+async function generateImage(prompt) {
+  const r = await fetch(
+    'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0',
+    {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${HF_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ inputs: prompt })
     }
-    const btn=document.createElement('button');
-    btn.className='remove-thumb';btn.innerHTML='✕';
-    btn.onclick=()=>{uploadedFiles=uploadedFiles.filter(f=>f!==file);div.remove();};
+  );
+  if (!r.ok) throw new Error('Image generation failed. Model may be loading, try again in 20 seconds.');
+  const blob = await r.blob();
+  return URL.createObjectURL(blob);
+}
+
+// ── UI HELPERS ────────────────────────────────────────────
+function setMode(m, btn) {
+  mode = m;
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const ph = { chat: 'Ask Sweety anything...', image: 'Describe the image you want to create...', news: 'Search for latest news...' };
+  document.getElementById('msgInput').placeholder = ph[m];
+}
+
+function usePrompt(text) {
+  const ws = document.getElementById('welcomeScreen');
+  if (ws) ws.remove();
+  document.getElementById('msgInput').value = text;
+  sendMessage();
+}
+
+function newChat() {
+  messages = [];
+  document.getElementById('chatArea').innerHTML = `
+    <div class="welcome-screen" id="welcomeScreen">
+      <div class="big-logo">🌸</div>
+      <h2>Hi! I'm <span style="color:var(--pink)">Sweety</span> 💕</h2>
+      <p>Your all-in-one AI companion. Ask me anything!</p>
+      <div class="suggestion-chips">
+        <span class="chip" onclick="usePrompt('Help me understand my legal rights as a tenant')">⚖️ Legal Help</span>
+        <span class="chip" onclick="usePrompt('Generate an image of a beautiful sunset')">🎨 Generate Image</span>
+        <span class="chip" onclick="usePrompt('What are the latest AI news today?')">📰 Latest News</span>
+        <span class="chip" onclick="usePrompt('Help me debug my Python code')">💻 IT Help</span>
+      </div>
+    </div>`;
+}
+
+function handleFile(input) {
+  const preview = document.getElementById('uploadPreview');
+  Array.from(input.files).forEach(file => {
+    uploadedFiles.push(file);
+    const div = document.createElement('div');
+    div.className = 'upload-thumb';
+    if (file.type.startsWith('image/')) {
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      div.appendChild(img);
+    } else {
+      div.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:.65rem;padding:4px;text-align:center;color:var(--muted);">📄 ${file.name.slice(0,8)}</div>`;
+    }
+    const btn = document.createElement('button');
+    btn.className = 'remove-thumb'; btn.innerHTML = '✕';
+    btn.onclick = () => { uploadedFiles = uploadedFiles.filter(f => f !== file); div.remove(); };
     div.appendChild(btn);
     preview.appendChild(div);
   });
-  input.value='';
+  input.value = '';
 }
 
-function addMessage(role,content,imageUrl=null,fileInfo=null){
-  const ws=document.getElementById('welcomeScreen');
-  if(ws)ws.remove();
-  const area=document.getElementById('chatArea');
-  const div=document.createElement('div');
-  div.className=`msg ${role}`;
-  const time=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  const avatarContent=role==='sweety'?'🌸':(currentUser?.user_metadata?.avatar_url?`<img src="${currentUser.user_metadata.avatar_url}"/>`:'👤');
-  let extra='';
-  if(imageUrl)extra+=`<img class="msg-image" src="${imageUrl}" alt="Generated image"/>`;
-  if(fileInfo)extra+=`<a class="msg-file" href="${fileInfo.url}" target="_blank">📎 ${fileInfo.name}</a>`;
-  const watermark=role==='sweety'?`<div class="watermark">🌸 © AI Sweety</div>`:'';
-  div.innerHTML=`
-    <div class="msg-avatar">${avatarContent}</div>
+function addMessage(role, content, imageUrl = null) {
+  const ws = document.getElementById('welcomeScreen');
+  if (ws) ws.remove();
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const avatar = role === 'sweety' ? '🌸' : '👤';
+  const watermark = role === 'sweety' ? `<div class="watermark">🌸 © AI Sweety</div>` : '';
+  const extra = imageUrl ? `<img class="msg-image" src="${imageUrl}" alt="Generated image"/>` : '';
+  div.innerHTML = `
+    <div class="msg-avatar">${avatar}</div>
     <div>
       <div class="msg-bubble">${content}${extra}${watermark}</div>
       <div class="msg-time">${time}</div>
     </div>`;
   area.appendChild(div);
-  area.scrollTop=area.scrollHeight;
-  return div;
+  area.scrollTop = area.scrollHeight;
 }
 
-function addTyping(){
-  const area=document.getElementById('chatArea');
-  const div=document.createElement('div');
-  div.className='msg sweety';div.id='typingMsg';
-  div.innerHTML=`<div class="msg-avatar">🌸</div><div><div class="msg-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div>`;
-  area.appendChild(div);area.scrollTop=area.scrollHeight;
+function addTyping() {
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'msg sweety'; div.id = 'typingMsg';
+  div.innerHTML = `<div class="msg-avatar">🌸</div><div><div class="msg-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div>`;
+  area.appendChild(div); area.scrollTop = area.scrollHeight;
 }
-function removeTyping(){const t=document.getElementById('typingMsg');if(t)t.remove();}
+function removeTyping() { const t = document.getElementById('typingMsg'); if (t) t.remove(); }
 
-async function sendMessage(){
-  const input=document.getElementById('msgInput');
-  const text=input.value.trim();
-  if(!text&&uploadedFiles.length===0)return;
-  const btn=document.getElementById('sendBtn');
-  btn.disabled=true;
-  const userText=text||(uploadedFiles.length>0?`[Uploaded ${uploadedFiles.length} file(s)]`:'');
-  addMessage('user',userText);
-  messages.push({role:'user',content:userText});
-  input.value='';input.style.height='auto';
-  document.getElementById('uploadPreview').innerHTML='';
-  const files=[...uploadedFiles];uploadedFiles=[];
+function addToHistory(text) {
+  const h = document.getElementById('chatHistory');
+  const d = document.createElement('div');
+  d.className = 'history-item';
+  d.innerHTML = `<span>💬</span>${text.slice(0, 28)}${text.length > 28 ? '...' : ''}`;
+  h.insertBefore(d, h.firstChild);
+}
 
+// ── SEND MESSAGE ──────────────────────────────────────────
+async function sendMessage() {
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if (!text && uploadedFiles.length === 0) return;
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+  const userText = text || `[Uploaded ${uploadedFiles.length} file(s)]`;
+  addMessage('user', userText);
+  messages.push({ role: 'user', content: userText });
+  input.value = ''; input.style.height = 'auto';
+  document.getElementById('uploadPreview').innerHTML = '';
+  uploadedFiles = [];
   addTyping();
-  try{
-    if(mode==='image'){
-      const imageUrl=await generateImage(text);
+
+  try {
+    if (mode === 'image') {
+      addMessage('sweety', '🎨 Generating your image... this may take 20-30 seconds...');
       removeTyping();
-      addMessage('sweety',`Here's your generated image for: "<em>${text}</em>"`,imageUrl);
-    }else if(mode==='news'){
-      const results=await searchWeb(text);
+      const imageUrl = await generateImage(text);
+      // Remove the generating message
+      const msgs = document.querySelectorAll('.msg.sweety');
+      msgs[msgs.length - 1].remove();
+      addMessage('sweety', `Here's your AI generated image for: "<em>${text}</em>"`, imageUrl);
+
+    } else if (mode === 'news') {
+      const results = await searchWeb(text);
       removeTyping();
-      let newsText=`Here are the latest results for "<strong>${text}</strong>":\n\n`;
-      results.slice(0,4).forEach((r,i)=>{newsText+=`${i+1}. <strong>${r.title}</strong>\n${r.content?.substring(0,120)}...\n\n`;});
-      newsText+='\n\n© AI Sweety';
-      addMessage('sweety',newsText.replace(/\n/g,'<br/>'));
-    }else{
-      const langInstruction=currentLang!=='en'?`Always respond in the language with code: ${currentLang}.`:'';
-      const systemPrompt=`You are AI Sweety, a friendly, helpful, and intelligent AI assistant. You help with legal questions, IT problems, coding, social media, general questions, and creative tasks. ${langInstruction} Always end your response with "© AI Sweety" on a new line.`;
-      const reply=await callGroq(messages,systemPrompt);
+      let newsText = `📰 Latest results for "<strong>${text}</strong>":<br/><br/>`;
+      if (results.length === 0) {
+        newsText += 'No results found. Try a different search term.';
+      } else {
+        results.slice(0, 4).forEach((r, i) => {
+          newsText += `<strong>${i + 1}. ${r.title}</strong><br/>${(r.content || '').slice(0, 150)}...<br/><br/>`;
+        });
+      }
+      addMessage('sweety', newsText);
+
+    } else {
+      const langNote = currentLang !== 'en' ? `Always respond in language with code: ${currentLang}.` : '';
+      const sys = `You are AI Sweety, a friendly, helpful, and intelligent AI assistant. You help with legal questions, IT problems, coding, social media, creative writing, and all general questions. Be warm and supportive. ${langNote} Always end your response with a new line and "© AI Sweety".`;
+      const reply = await callGroq(messages, sys);
       removeTyping();
-      addMessage('sweety',reply.replace(/\n/g,'<br/>'));
-      messages.push({role:'assistant',content:reply});
-      saveToHistory(userText);
+      addMessage('sweety', reply.replace(/\n/g, '<br/>'));
+      messages.push({ role: 'assistant', content: reply });
+      addToHistory(userText);
     }
-  }catch(err){
+  } catch (err) {
     removeTyping();
-    addMessage('sweety',`Sorry, I had trouble processing that. Please try again! 🌸<br/><small>${err.message}</small>`);
-  }finally{btn.disabled=false;}
+    addMessage('sweety', `Sorry, I had a problem! Please try again 🌸<br/><small style="color:var(--muted)">${err.message}</small>`);
+  } finally {
+    btn.disabled = false;
+  }
 }
 
-function saveToHistory(text){
-  const history=document.getElementById('chatHistory');
-  const item=document.createElement('div');
-  item.className='history-item active';
-  document.querySelectorAll('.history-item').forEach(i=>i.classList.remove('active'));
-  item.innerHTML=`<span class="h-icon">💬</span>${text.substring(0,28)}${text.length>28?'...':''}`;
-  history.insertBefore(item,history.firstChild);
-}
-
-function loadHistory(){
-  // History is already pre-populated in HTML for demo. In production, load from Supabase.
-}
-
-async function logout(){
-  const sb=getSupabase();
+async function logout() {
   await sb.auth.signOut();
-  window.location.href='login.html';
+  window.location.href = 'login.html';
 }
 </script>
-</body></html>
+</body>
+</html>
