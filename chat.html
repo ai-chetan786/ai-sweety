@@ -302,19 +302,20 @@ async function searchWeb(query) {
   return data.results || [];
 }
 
-// ── HUGGING FACE IMAGE GEN ────────────────────────────────
+// ── IMAGE GENERATION via Vercel backend (no CORS issues!) ──
 async function generateImage(prompt) {
-  const res = await fetch(
-    'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0',
-    {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${CFG.HF_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ inputs: prompt })
-    }
-  );
-  if (!res.ok) throw new Error('Image model is loading. Wait 30 seconds and try again! 🎨');
-  const blob = await res.blob();
-  return URL.createObjectURL(blob);
+  // Calls /api/image serverless function — HuggingFace from server side
+  const res = await fetch('/api/image', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt })
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) {
+    throw new Error(data.error || 'Image generation failed. Try again in 30 seconds!');
+  }
+  // data.image is base64 string
+  return data.image;
 }
 
 // ── UI HELPERS ────────────────────────────────────────────
