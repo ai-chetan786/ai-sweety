@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
-:root{--pink:#ff6b9d;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--dark3:#1a1a2e;--card:#16213e;--text:#f0f0ff;--muted:#8888aa;}
+:root{--pink:#ff6b9d;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--card:#16213e;--text:#f0f0ff;--muted:#8888aa;}
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;overflow:hidden;}
 body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;display:flex;}
@@ -21,22 +21,21 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
 .history-item{padding:.65rem .8rem;border-radius:8px;cursor:pointer;font-size:.83rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:.5rem;}
 .history-item:hover{background:rgba(255,107,157,.1);color:var(--text);}
 .sidebar-bottom{padding:1rem;border-top:1px solid rgba(255,255,255,.05);}
-.user-mini{display:flex;align-items:center;gap:.7rem;padding:.6rem;border-radius:10px;cursor:pointer;text-decoration:none;}
+.user-mini{display:flex;align-items:center;gap:.7rem;padding:.6rem;border-radius:10px;text-decoration:none;}
 .user-mini:hover{background:rgba(255,255,255,.05);}
 .user-avatar-sm{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;}
 .user-name-sm{font-size:.82rem;font-weight:600;color:var(--text);}
 .user-role-sm{font-size:.72rem;color:var(--muted);}
 .sidebar-nav{padding:.5rem;}
 .nav-item{display:flex;align-items:center;gap:.7rem;padding:.65rem .8rem;border-radius:8px;font-size:.85rem;color:var(--muted);text-decoration:none;transition:.2s;}
-.nav-item:hover{background:rgba(255,255,255,.05);color:var(--text);}
-.nav-item.active{background:rgba(255,107,157,.1);color:var(--pink);}
+.nav-item:hover,.nav-item.active{background:rgba(255,107,157,.1);color:var(--pink);}
 .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
 .top-bar{padding:.9rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .model-badge{background:rgba(255,107,157,.1);border:1px solid rgba(255,107,157,.2);color:var(--pink);padding:.3rem .8rem;border-radius:50px;font-size:.75rem;font-weight:600;}
 .top-actions{display:flex;align-items:center;gap:.5rem;}
-.icon-btn{width:34px;height:34px;border-radius:8px;background:none;border:1px solid rgba(255,255,255,.1);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:.2s;}
+.icon-btn{width:34px;height:34px;border-radius:8px;background:none;border:1px solid rgba(255,255,255,.1);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
 .icon-btn:hover{border-color:var(--pink);color:var(--pink);}
-.lang-pill{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:.3rem .8rem;font-size:.78rem;color:var(--text);cursor:pointer;outline:none;}
+.lang-pill{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:.3rem .8rem;font-size:.78rem;color:var(--text);outline:none;}
 .chat-area{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1.2rem;}
 .welcome-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;}
 .big-logo{font-size:4rem;margin-bottom:1rem;animation:pulse 2s ease infinite;}
@@ -44,7 +43,7 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
 .welcome-screen h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:.5rem;}
 .welcome-screen p{color:var(--muted);font-size:.95rem;max-width:400px;line-height:1.7;}
 .suggestion-chips{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:1.5rem;}
-.chip{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:.5rem 1rem;font-size:.82rem;cursor:pointer;transition:.2s;color:var(--text);}
+.chip{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:.5rem 1rem;font-size:.82rem;cursor:pointer;color:var(--text);}
 .chip:hover{border-color:var(--pink);color:var(--pink);}
 .msg{display:flex;gap:.9rem;max-width:80%;animation:msgIn .3s ease;}
 @keyframes msgIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
@@ -71,36 +70,30 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
 .mode-tabs{display:flex;gap:.4rem;margin-bottom:.7rem;}
 .mode-tab{padding:.3rem .8rem;border-radius:50px;font-size:.78rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);color:var(--muted);background:none;transition:.2s;}
 .mode-tab.active{background:linear-gradient(135deg,var(--pink),var(--purple));border-color:transparent;color:#fff;}
-.input-box{display:flex;align-items:flex-end;gap:.6rem;background:var(--dark2);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:.5rem .5rem .5rem 1rem;transition:.2s;}
+.input-box{display:flex;align-items:flex-end;gap:.6rem;background:var(--dark2);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:.5rem .5rem .5rem 1rem;}
 .input-box:focus-within{border-color:var(--pink);}
 .input-box textarea{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:.92rem;font-family:'DM Sans',sans-serif;resize:none;max-height:140px;line-height:1.5;padding:.4rem 0;}
 .input-box textarea::placeholder{color:var(--muted);}
 .input-actions{display:flex;align-items:center;gap:.3rem;flex-shrink:0;}
-.attach-btn,.send-btn{width:36px;height:36px;border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:.2s;}
+.attach-btn,.send-btn{width:36px;height:36px;border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;}
 .attach-btn{background:rgba(255,255,255,.06);color:var(--muted);}
 .attach-btn:hover{background:rgba(255,107,157,.1);color:var(--pink);}
 .send-btn{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
-.send-btn:hover:not(:disabled){transform:scale(1.05);}
 .send-btn:disabled{opacity:.4;cursor:not-allowed;}
 #fileInput,#cameraInput{display:none;}
-.loading-keys{position:fixed;inset:0;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:1rem;}
-.loading-keys .spin{width:40px;height:40px;border:3px solid rgba(255,107,157,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .8s linear infinite;}
+.loading-screen{position:fixed;inset:0;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:1rem;}
+.spin{width:40px;height:40px;border:3px solid rgba(255,107,157,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;}
-@media(max-width:700px){
-  .sidebar{position:fixed;left:-220px;z-index:200;transition:.3s;}
-  .sidebar.open{left:0;}
-  .menu-toggle{display:flex;}
-  .msg{max-width:92%;}
-}
+/* Debug panel */
+.debug-box{background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);border-radius:12px;padding:1rem;margin:1rem;font-size:.8rem;color:#ff9999;display:none;}
+@media(max-width:700px){.sidebar{position:fixed;left:-220px;z-index:200;transition:.3s;}.sidebar.open{left:0;}.msg{max-width:92%;}}
 </style>
 </head>
 <body>
 
-<!-- Loading screen while keys are fetched -->
-<div class="loading-keys" id="loadingScreen">
+<div class="loading-screen" id="loadingScreen">
   <div class="spin"></div>
-  <div style="color:var(--muted);font-size:.9rem;">Starting AI Sweety... 🌸</div>
+  <div style="color:var(--muted)">Starting AI Sweety... 🌸</div>
 </div>
 
 <aside class="sidebar" id="sidebar">
@@ -130,28 +123,26 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
 <div class="main">
   <div class="top-bar">
     <div style="display:flex;align-items:center;gap:.8rem;">
-      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
-      <span class="model-badge">🤖 Groq · Llama3-70B</span>
+      <button class="icon-btn" onclick="document.getElementById('sidebar').classList.toggle('open')" style="display:none" id="menuBtn">☰</button>
+      <span class="model-badge" id="modelBadge">🤖 Loading...</span>
     </div>
     <div class="top-actions">
       <select class="lang-pill" id="langSelect" onchange="currentLang=this.value">
         <option value="en">🌐 English</option>
-        <option value="hi">हिंदी</option>
-        <option value="ta">தமிழ்</option>
-        <option value="te">తెలుగు</option>
-        <option value="kn">ಕನ್ನಡ</option>
-        <option value="ml">മലയാളം</option>
-        <option value="mr">मराठी</option>
-        <option value="bn">বাংলা</option>
-        <option value="fr">Français</option>
-        <option value="es">Español</option>
-        <option value="ar">العربية</option>
+        <option value="hi">हिंदी</option><option value="ta">தமிழ்</option>
+        <option value="te">తెలుగు</option><option value="kn">ಕನ್ನಡ</option>
+        <option value="ml">മലയാളം</option><option value="mr">मराठी</option>
+        <option value="bn">বাংলা</option><option value="fr">Français</option>
+        <option value="es">Español</option><option value="ar">العربية</option>
         <option value="zh">中文</option>
       </select>
-      <button class="icon-btn" onclick="newChat()" title="New Chat">🗑️</button>
-      <button class="icon-btn" onclick="logout()" title="Logout">🚪</button>
+      <button class="icon-btn" onclick="newChat()">🗑️</button>
+      <button class="icon-btn" onclick="logout()">🚪</button>
     </div>
   </div>
+
+  <!-- Debug box — shows key status -->
+  <div class="debug-box" id="debugBox"></div>
 
   <div class="chat-area" id="chatArea">
     <div class="welcome-screen" id="welcomeScreen">
@@ -162,9 +153,9 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
         <span class="chip" onclick="usePrompt('Help me understand my legal rights as a tenant')">⚖️ Legal Help</span>
         <span class="chip" onclick="usePrompt('Generate an image of a beautiful sunset over mountains')">🎨 Generate Image</span>
         <span class="chip" onclick="usePrompt('What are the latest AI news today?')">📰 Latest News</span>
-        <span class="chip" onclick="usePrompt('Help me debug my Python code')">💻 IT Help</span>
-        <span class="chip" onclick="usePrompt('Write me a creative Instagram caption')">📸 Social Media</span>
-        <span class="chip" onclick="usePrompt('Tell me something motivational')">✨ Inspire Me</span>
+        <span class="chip" onclick="usePrompt('Help me fix my Python code error')">💻 IT Help</span>
+        <span class="chip" onclick="usePrompt('Write a creative Instagram caption for a sunset photo')">📸 Social Media</span>
+        <span class="chip" onclick="usePrompt('Tell me something motivational for today')">✨ Inspire Me</span>
       </div>
     </div>
   </div>
@@ -181,8 +172,8 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
         oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,140)+'px'"
         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
       <div class="input-actions">
-        <button class="attach-btn" onclick="document.getElementById('fileInput').click()" title="Upload file">📎</button>
-        <button class="attach-btn" onclick="document.getElementById('cameraInput').click()" title="Camera">📷</button>
+        <button class="attach-btn" onclick="document.getElementById('fileInput').click()">📎</button>
+        <button class="attach-btn" onclick="document.getElementById('cameraInput').click()">📷</button>
         <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
       </div>
     </div>
@@ -192,40 +183,34 @@ body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;d
 </div>
 
 <script>
-// ── ALL KEYS LOADED SAFELY FROM VERCEL /api/env ──────────
-// ✅ Zero keys in this file — 100% safe for GitHub!
-let SUPABASE_URL = '';
-let SUPABASE_ANON_KEY = '';
-let GROQ_API_KEY = '';
-let OPENROUTER_KEY = '';
-let TAVILY_KEY = '';
-let HF_KEY = '';
+// All keys start empty — filled safely from /api/env
+let CFG = {
+  SUPABASE_URL: '', SUPABASE_ANON_KEY: '',
+  GROQ_API_KEY: '', OPENROUTER_API_KEY: '',
+  TAVILY_API_KEY: '', HF_API_KEY: ''
+};
 let sb = null;
+let messages = [], mode = 'chat', currentLang = 'en';
+let uploadedFiles = [], currentUser = null;
 
-let messages = [];
-let mode = 'chat';
-let currentLang = 'en';
-let uploadedFiles = [];
-let currentUser = null;
-
-// ── STEP 1: Fetch keys from Vercel, then init everything ──
+// ── BOOT: fetch keys → init ───────────────────────────────
 async function boot() {
   try {
+    // Fetch keys from Vercel serverless function
     const res = await fetch('/api/env');
-    if (!res.ok) throw new Error('Could not load config');
-    const keys = await res.json();
+    if (!res.ok) throw new Error(`/api/env returned ${res.status}`);
+    CFG = await res.json();
 
-    SUPABASE_URL      = keys.SUPABASE_URL;
-    SUPABASE_ANON_KEY = keys.SUPABASE_ANON_KEY;
-    GROQ_API_KEY      = keys.GROQ_API_KEY;
-    OPENROUTER_KEY    = keys.OPENROUTER_API_KEY;
-    TAVILY_KEY        = keys.TAVILY_API_KEY;
-    HF_KEY            = keys.HF_API_KEY;
+    // Check keys loaded
+    const missing = Object.entries(CFG).filter(([k,v]) => !v).map(([k]) => k);
+    if (missing.length > 0) {
+      showDebug('⚠️ Missing keys: ' + missing.join(', ') + '<br/>Check Vercel → Environment Variables');
+    }
 
-    // Init Supabase with real keys
-    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Init Supabase
+    sb = supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
 
-    // Check login
+    // Check auth
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { window.location.href = 'login.html'; return; }
 
@@ -234,97 +219,121 @@ async function boot() {
     document.getElementById('sidebarName').textContent = name;
     currentLang = currentUser.user_metadata?.preferred_lang || 'en';
     document.getElementById('langSelect').value = currentLang;
+    document.getElementById('modelBadge').textContent = '🤖 Groq · Llama3-70B';
 
-    // Hide loading screen
+    // Hide loader
     document.getElementById('loadingScreen').style.display = 'none';
 
-  } catch (err) {
+  } catch(err) {
     document.getElementById('loadingScreen').innerHTML =
-      `<div style="color:#ff4d4d;text-align:center;padding:2rem;">
-        ❌ Failed to load config<br/>
+      `<div style="color:#ff4d4d;text-align:center;padding:2rem;max-width:400px">
+        <div style="font-size:2rem;margin-bottom:1rem">❌</div>
+        <strong>Could not start AI Sweety</strong><br/><br/>
         <small style="color:var(--muted)">${err.message}</small><br/><br/>
-        <small>Make sure api/env.js is deployed on Vercel</small>
+        <small>Make sure api/env.js is uploaded to GitHub and Vercel has your Environment Variables set.</small>
       </div>`;
   }
 }
 boot();
 
-// ── GROQ AI ───────────────────────────────────────────────
-async function callGroq(msgs, sysprompt) {
-  try {
-    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'llama3-70b-8192',
-        messages: [{ role: 'system', content: sysprompt }, ...msgs],
-        max_tokens: 2048,
-        temperature: 0.7
-      })
-    });
-    if (!r.ok) throw new Error('Groq failed');
-    const d = await r.json();
-    return d.choices[0].message.content;
-  } catch (e) {
-    console.warn('Groq failed, trying OpenRouter...', e);
-    return await callOpenRouter(msgs, sysprompt);
-  }
+function showDebug(msg) {
+  const box = document.getElementById('debugBox');
+  box.innerHTML = msg; box.style.display = 'block';
+  setTimeout(() => box.style.display = 'none', 8000);
 }
 
-// ── OPENROUTER FALLBACK ───────────────────────────────────
-async function callOpenRouter(msgs, sysprompt) {
-  const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+// ── GROQ AI (Primary) ─────────────────────────────────────
+async function callGroq(msgs, sys) {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENROUTER_KEY}`,
+      'Authorization': `Bearer ${CFG.GROQ_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'llama3-70b-8192',
+      messages: [{ role: 'system', content: sys }, ...msgs],
+      max_tokens: 2048,
+      temperature: 0.7
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `Groq error ${res.status}`);
+  }
+  const data = await res.json();
+  if (!data.choices || !data.choices[0]) throw new Error('Empty response from Groq');
+  return data.choices[0].message.content;
+}
+
+// ── OPENROUTER (Fallback) ─────────────────────────────────
+async function callOpenRouter(msgs, sys) {
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${CFG.OPENROUTER_API_KEY}`,
       'HTTP-Referer': window.location.origin,
       'X-Title': 'AI Sweety'
     },
     body: JSON.stringify({
       model: 'mistralai/mistral-7b-instruct',
-      messages: [{ role: 'system', content: sysprompt }, ...msgs]
+      messages: [{ role: 'system', content: sys }, ...msgs]
     })
   });
-  const d = await r.json();
-  return d.choices[0].message.content;
+  if (!res.ok) throw new Error(`OpenRouter error ${res.status}`);
+  const data = await res.json();
+  if (!data.choices || !data.choices[0]) throw new Error('Empty response from OpenRouter');
+  return data.choices[0].message.content;
 }
 
-// ── TAVILY NEWS SEARCH ────────────────────────────────────
+// ── Smart AI caller with fallback ────────────────────────
+async function askAI(msgs, sys) {
+  try {
+    return await callGroq(msgs, sys);
+  } catch(e) {
+    console.warn('Groq failed:', e.message, '— trying OpenRouter...');
+    try {
+      return await callOpenRouter(msgs, sys);
+    } catch(e2) {
+      throw new Error(`Both AI services failed. Groq: ${e.message} | OpenRouter: ${e2.message}`);
+    }
+  }
+}
+
+// ── TAVILY News Search ────────────────────────────────────
 async function searchWeb(query) {
-  const r = await fetch('https://api.tavily.com/search', {
+  const res = await fetch('https://api.tavily.com/search', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ api_key: TAVILY_KEY, query, search_depth: 'basic', max_results: 5 })
+    body: JSON.stringify({ api_key: CFG.TAVILY_API_KEY, query, search_depth: 'basic', max_results: 5 })
   });
-  const d = await r.json();
-  return d.results || [];
+  if (!res.ok) throw new Error(`Tavily error ${res.status}`);
+  const data = await res.json();
+  return data.results || [];
 }
 
-// ── HUGGING FACE IMAGE GEN ────────────────────────────────
+// ── Hugging Face Image Generation ────────────────────────
 async function generateImage(prompt) {
-  const r = await fetch(
+  const res = await fetch(
     'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0',
     {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${HF_KEY}`, 'Content-Type': 'application/json' },
+      headers: { 'Authorization': `Bearer ${CFG.HF_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ inputs: prompt })
     }
   );
-  if (!r.ok) throw new Error('Image generation failed. Model may be loading, try again in 20 seconds.');
-  const blob = await r.blob();
+  if (!res.ok) throw new Error('Image model is loading. Please wait 30 seconds and try again.');
+  const blob = await res.blob();
   return URL.createObjectURL(blob);
 }
 
-// ── UI HELPERS ────────────────────────────────────────────
+// ── UI ────────────────────────────────────────────────────
 function setMode(m, btn) {
   mode = m;
   document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
-  const ph = { chat: 'Ask Sweety anything...', image: 'Describe the image you want to create...', news: 'Search for latest news...' };
+  const ph = { chat: 'Ask Sweety anything...', image: 'Describe the image you want...', news: 'Search for latest news...' };
   document.getElementById('msgInput').placeholder = ph[m];
 }
 
@@ -341,12 +350,12 @@ function newChat() {
     <div class="welcome-screen" id="welcomeScreen">
       <div class="big-logo">🌸</div>
       <h2>Hi! I'm <span style="color:var(--pink)">Sweety</span> 💕</h2>
-      <p>Your all-in-one AI companion. Ask me anything!</p>
+      <p>Ask me anything!</p>
       <div class="suggestion-chips">
-        <span class="chip" onclick="usePrompt('Help me understand my legal rights as a tenant')">⚖️ Legal Help</span>
-        <span class="chip" onclick="usePrompt('Generate an image of a beautiful sunset')">🎨 Generate Image</span>
-        <span class="chip" onclick="usePrompt('What are the latest AI news today?')">📰 Latest News</span>
-        <span class="chip" onclick="usePrompt('Help me debug my Python code')">💻 IT Help</span>
+        <span class="chip" onclick="usePrompt('Help me with a legal problem')">⚖️ Legal</span>
+        <span class="chip" onclick="usePrompt('Generate an image of a beautiful sunset')">🎨 Image</span>
+        <span class="chip" onclick="usePrompt('Latest AI news today')">📰 News</span>
+        <span class="chip" onclick="usePrompt('Help me fix my code')">💻 Code</span>
       </div>
     </div>`;
 }
@@ -355,48 +364,34 @@ function handleFile(input) {
   const preview = document.getElementById('uploadPreview');
   Array.from(input.files).forEach(file => {
     uploadedFiles.push(file);
-    const div = document.createElement('div');
-    div.className = 'upload-thumb';
+    const div = document.createElement('div'); div.className = 'upload-thumb';
     if (file.type.startsWith('image/')) {
-      const img = document.createElement('img');
-      img.src = URL.createObjectURL(file);
-      div.appendChild(img);
+      const img = document.createElement('img'); img.src = URL.createObjectURL(file); div.appendChild(img);
     } else {
-      div.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:.65rem;padding:4px;text-align:center;color:var(--muted);">📄 ${file.name.slice(0,8)}</div>`;
+      div.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:.65rem;padding:4px;color:var(--muted);">📄 ${file.name.slice(0,8)}</div>`;
     }
-    const btn = document.createElement('button');
-    btn.className = 'remove-thumb'; btn.innerHTML = '✕';
-    btn.onclick = () => { uploadedFiles = uploadedFiles.filter(f => f !== file); div.remove(); };
-    div.appendChild(btn);
-    preview.appendChild(div);
+    const rm = document.createElement('button'); rm.className = 'remove-thumb'; rm.innerHTML = '✕';
+    rm.onclick = () => { uploadedFiles = uploadedFiles.filter(f => f !== file); div.remove(); };
+    div.appendChild(rm); preview.appendChild(div);
   });
   input.value = '';
 }
 
 function addMessage(role, content, imageUrl = null) {
-  const ws = document.getElementById('welcomeScreen');
-  if (ws) ws.remove();
+  const ws = document.getElementById('welcomeScreen'); if (ws) ws.remove();
   const area = document.getElementById('chatArea');
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
+  const div = document.createElement('div'); div.className = `msg ${role}`;
   const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const avatar = role === 'sweety' ? '🌸' : '👤';
-  const watermark = role === 'sweety' ? `<div class="watermark">🌸 © AI Sweety</div>` : '';
-  const extra = imageUrl ? `<img class="msg-image" src="${imageUrl}" alt="Generated image"/>` : '';
-  div.innerHTML = `
-    <div class="msg-avatar">${avatar}</div>
-    <div>
-      <div class="msg-bubble">${content}${extra}${watermark}</div>
-      <div class="msg-time">${time}</div>
-    </div>`;
-  area.appendChild(div);
-  area.scrollTop = area.scrollHeight;
+  const wm = role === 'sweety' ? `<div class="watermark">🌸 © AI Sweety</div>` : '';
+  const imgHtml = imageUrl ? `<img class="msg-image" src="${imageUrl}" alt="Generated"/>` : '';
+  div.innerHTML = `<div class="msg-avatar">${avatar}</div><div><div class="msg-bubble">${content}${imgHtml}${wm}</div><div class="msg-time">${time}</div></div>`;
+  area.appendChild(div); area.scrollTop = area.scrollHeight;
 }
 
 function addTyping() {
   const area = document.getElementById('chatArea');
-  const div = document.createElement('div');
-  div.className = 'msg sweety'; div.id = 'typingMsg';
+  const div = document.createElement('div'); div.className = 'msg sweety'; div.id = 'typingMsg';
   div.innerHTML = `<div class="msg-avatar">🌸</div><div><div class="msg-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div>`;
   area.appendChild(div); area.scrollTop = area.scrollHeight;
 }
@@ -404,9 +399,8 @@ function removeTyping() { const t = document.getElementById('typingMsg'); if (t)
 
 function addToHistory(text) {
   const h = document.getElementById('chatHistory');
-  const d = document.createElement('div');
-  d.className = 'history-item';
-  d.innerHTML = `<span>💬</span>${text.slice(0, 28)}${text.length > 28 ? '...' : ''}`;
+  const d = document.createElement('div'); d.className = 'history-item';
+  d.innerHTML = `<span>💬</span>${text.slice(0,28)}${text.length>28?'...':''}`;
   h.insertBefore(d, h.firstChild);
 }
 
@@ -415,8 +409,7 @@ async function sendMessage() {
   const input = document.getElementById('msgInput');
   const text = input.value.trim();
   if (!text && uploadedFiles.length === 0) return;
-  const btn = document.getElementById('sendBtn');
-  btn.disabled = true;
+  const btn = document.getElementById('sendBtn'); btn.disabled = true;
   const userText = text || `[Uploaded ${uploadedFiles.length} file(s)]`;
   addMessage('user', userText);
   messages.push({ role: 'user', content: userText });
@@ -427,39 +420,40 @@ async function sendMessage() {
 
   try {
     if (mode === 'image') {
-      addMessage('sweety', '🎨 Generating your image... this may take 20-30 seconds...');
       removeTyping();
+      addMessage('sweety', '🎨 Generating your image... please wait 20-30 seconds...');
       const imageUrl = await generateImage(text);
-      // Remove the generating message
-      const msgs = document.querySelectorAll('.msg.sweety');
-      msgs[msgs.length - 1].remove();
+      // Remove the "generating" message
+      const lastMsg = document.querySelector('#chatArea .msg.sweety:last-of-type');
+      if (lastMsg) lastMsg.remove();
       addMessage('sweety', `Here's your AI generated image for: "<em>${text}</em>"`, imageUrl);
 
     } else if (mode === 'news') {
       const results = await searchWeb(text);
       removeTyping();
-      let newsText = `📰 Latest results for "<strong>${text}</strong>":<br/><br/>`;
-      if (results.length === 0) {
-        newsText += 'No results found. Try a different search term.';
+      let html = `📰 Results for "<strong>${text}</strong>":<br/><br/>`;
+      if (!results.length) {
+        html += 'No results found. Try different keywords.';
       } else {
-        results.slice(0, 4).forEach((r, i) => {
-          newsText += `<strong>${i + 1}. ${r.title}</strong><br/>${(r.content || '').slice(0, 150)}...<br/><br/>`;
+        results.slice(0,4).forEach((r,i) => {
+          html += `<strong>${i+1}. ${r.title}</strong><br/>${(r.content||'').slice(0,150)}...<br/><br/>`;
         });
       }
-      addMessage('sweety', newsText);
+      addMessage('sweety', html);
 
     } else {
-      const langNote = currentLang !== 'en' ? `Always respond in language with code: ${currentLang}.` : '';
-      const sys = `You are AI Sweety, a friendly, helpful, and intelligent AI assistant. You help with legal questions, IT problems, coding, social media, creative writing, and all general questions. Be warm and supportive. ${langNote} Always end your response with a new line and "© AI Sweety".`;
-      const reply = await callGroq(messages, sys);
+      const langNote = currentLang !== 'en' ? `Always respond in the language with code: ${currentLang}. ` : '';
+      const sys = `You are AI Sweety, a friendly, helpful, and intelligent AI assistant. You help with legal questions, IT problems, coding, social media, creative writing, and all general questions. Be warm, supportive and thorough. ${langNote}Always end your response with a new line followed by "© AI Sweety".`;
+      const reply = await askAI(messages, sys);
       removeTyping();
       addMessage('sweety', reply.replace(/\n/g, '<br/>'));
       messages.push({ role: 'assistant', content: reply });
       addToHistory(userText);
     }
-  } catch (err) {
+  } catch(err) {
     removeTyping();
-    addMessage('sweety', `Sorry, I had a problem! Please try again 🌸<br/><small style="color:var(--muted)">${err.message}</small>`);
+    addMessage('sweety', `Sorry, I had a problem! 🌸<br/><small style="color:var(--muted);font-size:.8rem">Error: ${err.message}</small>`);
+    showDebug('❌ Error: ' + err.message);
   } finally {
     btn.disabled = false;
   }
@@ -470,5 +464,4 @@ async function logout() {
   window.location.href = 'login.html';
 }
 </script>
-</body>
-</html>
+</body></html>
