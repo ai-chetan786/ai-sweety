@@ -10,15 +10,7 @@
     { "src": "/social", "dest": "/social.html" },
     { "src": "/bio", "dest": "/bio.html" },
     { "src": "/forgot-password", "dest": "/forgot-password.html" },
-    { "src": "/reset-password", "dest": "/reset-password.html" }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" }
-      ]
-    }
+    { "src": "/reset-password", "dest": "/reset-password.html" },
+    { "src": "/confirm", "dest": "/confirm.html" }
   ]
 }
