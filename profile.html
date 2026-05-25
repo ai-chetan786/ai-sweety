@@ -2,71 +2,105 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
 <title>Profile — AI Sweety</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{--pink:#ff6b9d;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--card:#16213e;--text:#f0f0ff;--muted:#8888aa;--success:#4dff91;--error:#ff4d4d;}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
-.topnav{padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);backdrop-filter:blur(10px);position:sticky;top:0;z-index:10;background:rgba(10,10,15,.8);}
-.logo{display:flex;align-items:center;gap:.6rem;font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
-.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;-webkit-text-fill-color:initial;}
-.nav-links{display:flex;gap:.5rem;}
-.nav-link{padding:.5rem 1rem;border-radius:50px;font-size:.85rem;text-decoration:none;color:var(--muted);transition:.2s;}
-.nav-link:hover,.nav-link.active{color:var(--pink);}
-.page{max-width:760px;margin:0 auto;padding:2rem 1.5rem;}
-.cover-wrap{position:relative;height:180px;border-radius:20px;overflow:hidden;margin-bottom:70px;background:linear-gradient(135deg,rgba(255,107,157,.3),rgba(168,85,247,.3));}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:60px;}
+.topnav{position:sticky;top:0;z-index:100;padding:.9rem 1.2rem;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06);}
+.logo{display:flex;align-items:center;gap:.5rem;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+.logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;-webkit-text-fill-color:initial;}
+.nav-links{display:flex;gap:.3rem;}
+.nav-link{padding:.4rem .8rem;border-radius:50px;font-size:.82rem;text-decoration:none;color:var(--muted);transition:.2s;}
+.nav-link.active{color:var(--pink);}
+.page{max-width:800px;margin:0 auto;padding:1.5rem 1rem;}
+
+/* COVER */
+.cover-wrap{position:relative;height:180px;border-radius:18px;overflow:hidden;background:linear-gradient(135deg,rgba(255,107,157,.4),rgba(168,85,247,.4));cursor:pointer;margin-bottom:60px;}
 .cover-img{width:100%;height:100%;object-fit:cover;display:none;}
-.cover-edit{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.5);border:none;color:#fff;padding:.4rem .8rem;border-radius:8px;cursor:pointer;font-size:.8rem;backdrop-filter:blur(4px);}
-.avatar-wrap{position:absolute;bottom:-50px;left:1.5rem;}
-.avatar{width:100px;height:100px;border-radius:50%;border:4px solid var(--dark);background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:2.5rem;overflow:hidden;cursor:pointer;position:relative;}
+.cover-overlay{position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;opacity:0;transition:.3s;}
+.cover-wrap:hover .cover-overlay{opacity:1;}
+.cover-overlay span{color:#fff;font-size:.85rem;font-weight:600;}
+.avatar-wrap{position:absolute;bottom:-50px;left:1.2rem;}
+.avatar{width:96px;height:96px;border-radius:50%;border:4px solid var(--dark);background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:2.2rem;overflow:hidden;cursor:pointer;position:relative;}
 .avatar img{width:100%;height:100%;object-fit:cover;display:none;}
-.avatar-edit{position:absolute;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;font-size:1.2rem;border-radius:50%;}
-.avatar:hover .avatar-edit{display:flex;}
-.profile-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;}
-.profile-info h1{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:.2rem;}
-.handle{color:var(--muted);font-size:.88rem;}
-.bio-text{color:var(--text);font-size:.9rem;line-height:1.6;margin-top:.5rem;max-width:400px;}
-.stats-row{display:flex;gap:1.5rem;margin-top:.8rem;}
-.stat .num{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;}
-.stat .label{font-size:.75rem;color:var(--muted);}
-.edit-btn{background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;padding:.6rem 1.4rem;border-radius:50px;font-size:.88rem;font-weight:600;cursor:pointer;transition:.2s;}
-.edit-btn:hover{transform:translateY(-2px);}
-.tabs{display:flex;gap:.3rem;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:1.5rem;}
-.tab{padding:.7rem 1.2rem;font-size:.88rem;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:.2s;}
+.avatar-overlay{position:absolute;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;font-size:1.1rem;border-radius:50%;}
+.avatar:hover .avatar-overlay{display:flex;}
+
+/* PROFILE INFO */
+.profile-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.8rem;}
+.profile-info h1{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:.2rem;}
+.handle{color:var(--muted);font-size:.85rem;margin-bottom:.4rem;}
+.bio-text{font-size:.88rem;line-height:1.6;color:var(--text);max-width:450px;margin-bottom:.6rem;}
+.stats-row{display:flex;gap:1.5rem;}
+.stat{text-align:center;}
+.stat .num{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;}
+.stat .label{font-size:.72rem;color:var(--muted);}
+.profile-btns{display:flex;gap:.6rem;flex-wrap:wrap;}
+.btn{padding:.65rem 1.3rem;border-radius:50px;font-size:.85rem;font-weight:600;cursor:pointer;border:none;transition:.2s;display:flex;align-items:center;gap:.4rem;}
+.btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,107,157,.3);}
+.btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);}
+.btn-ghost:hover{border-color:var(--pink);}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:1.2rem;}
+.tab{flex:1;padding:.75rem;font-size:.85rem;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;text-align:center;transition:.2s;}
 .tab.active{color:var(--pink);border-bottom-color:var(--pink);}
-.posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
-.post-thumb{aspect-ratio:1;border-radius:10px;overflow:hidden;cursor:pointer;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:2rem;}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem;}
+
+/* POSTS GRID */
+.posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;}
+.post-thumb{aspect-ratio:1;border-radius:4px;overflow:hidden;cursor:pointer;background:var(--card);position:relative;}
+.post-thumb img,.post-thumb video{width:100%;height:100%;object-fit:cover;}
+.post-thumb .reel-icon{position:absolute;top:6px;right:6px;font-size:.8rem;}
+.post-thumb .overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;gap:1rem;font-size:.82rem;color:#fff;}
+.post-thumb:hover .overlay{display:flex;}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted);}
+.empty-state .icon{font-size:3rem;margin-bottom:.8rem;}
+
+/* EDIT MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:500;display:none;align-items:flex-end;justify-content:center;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:2rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
-.modal h3{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:1.5rem;}
-.form-group{margin-bottom:1.1rem;}
-label{display:block;font-size:.82rem;font-weight:500;color:var(--muted);margin-bottom:.4rem;}
-input,textarea,select{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:.8rem 1rem;color:var(--text);font-size:.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:.2s;}
+@media(min-width:600px){.modal-overlay{align-items:center;}}
+.modal{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:1.5rem;}
+@media(min-width:600px){.modal{border-radius:20px;}}
+.modal-handle{width:40px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:0 auto .8rem;}
+.modal h3{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:1.2rem;}
+.form-group{margin-bottom:1rem;}
+.form-label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:.4rem;}
+input[type=text],input[type=email],input[type=tel],input[type=date],textarea,select{
+  width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:.75rem 1rem;color:var(--text);font-size:.88rem;
+  font-family:'DM Sans',sans-serif;outline:none;transition:.2s;
+}
 input:focus,textarea:focus,select:focus{border-color:var(--pink);}
 input::placeholder,textarea::placeholder{color:var(--muted);}
 textarea{resize:vertical;min-height:80px;}
-.modal-actions{display:flex;gap:.8rem;margin-top:1.5rem;}
-.btn{flex:1;padding:.85rem;border-radius:10px;font-size:.9rem;font-weight:600;cursor:pointer;border:none;transition:.2s;}
-.btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
-.btn-ghost{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);}
-.alert{padding:.8rem 1rem;border-radius:8px;font-size:.85rem;margin-bottom:1rem;display:none;}
+select option{background:var(--dark2);}
+.char-count{text-align:right;font-size:.73rem;color:var(--muted);margin-top:.25rem;}
+.modal-actions{display:flex;gap:.7rem;margin-top:1.2rem;}
+.modal-btn{flex:1;padding:.8rem;border-radius:10px;font-size:.9rem;font-weight:600;cursor:pointer;border:none;transition:.2s;}
+.modal-btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
+.modal-btn-ghost{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);}
+.alert{padding:.7rem 1rem;border-radius:8px;font-size:.83rem;margin-bottom:.8rem;display:none;}
 .alert.success{background:rgba(77,255,145,.1);border:1px solid rgba(77,255,145,.3);color:var(--success);}
 .alert.error{background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.3);color:var(--error);}
-#coverInput,#avatarInput{display:none;}
-.spinner-overlay{position:fixed;inset:0;background:var(--dark);display:flex;align-items:center;justify-content:center;z-index:999;}
-.spin{width:40px;height:40px;border:3px solid rgba(255,107,157,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .8s linear infinite;}
+.spin{width:36px;height:36px;border:3px solid rgba(255,107,157,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
+.loading-screen{position:fixed;inset:0;background:var(--dark);display:flex;align-items:center;justify-content:center;z-index:999;}
+#coverInput,#avatarInput{display:none;}
+
+/* POST DETAIL MODAL */
+.post-detail-media{width:100%;max-height:400px;object-fit:contain;border-radius:10px;background:#000;}
+.post-detail-caption{margin:.8rem 0;font-size:.9rem;line-height:1.6;}
 </style>
 </head>
 <body>
 
-<div class="spinner-overlay" id="loadingScreen">
-  <div class="spin"></div>
-</div>
+<div class="loading-screen" id="loadingScreen"><div class="spin"></div></div>
 
 <nav class="topnav">
   <a href="index.html" class="logo"><div class="logo-icon">🌸</div>AI Sweety</a>
@@ -78,81 +112,107 @@ textarea{resize:vertical;min-height:80px;}
 </nav>
 
 <div class="page">
-  <div class="cover-wrap" id="coverWrap">
-    <img id="coverImg" src="" alt=""/>
-    <button class="cover-edit" onclick="document.getElementById('coverInput').click()">📷 Edit Cover</button>
+  <!-- COVER -->
+  <div class="cover-wrap" id="coverWrap" onclick="document.getElementById('coverInput').click()">
+    <img id="coverImg" src="" alt="Cover"/>
+    <div class="cover-overlay"><span>📷 Change Cover</span></div>
     <div class="avatar-wrap">
-      <div class="avatar" onclick="document.getElementById('avatarInput').click()">
+      <div class="avatar" id="avatarEl" onclick="event.stopPropagation();document.getElementById('avatarInput').click()">
         <span id="avatarEmoji">🌸</span>
-        <img id="avatarImg" src="" alt=""/>
-        <div class="avatar-edit">📷</div>
+        <img id="avatarImg" src="" alt="Avatar"/>
+        <div class="avatar-overlay">📷</div>
       </div>
     </div>
   </div>
-  <input type="file" id="coverInput" accept="image/*" onchange="uploadCover(this)"/>
-  <input type="file" id="avatarInput" accept="image/*" onchange="uploadAvatar(this)"/>
 
+  <input type="file" id="coverInput" accept="image/*" onchange="uploadMedia(this,'cover')"/>
+  <input type="file" id="avatarInput" accept="image/*" onchange="uploadMedia(this,'avatar')"/>
+
+  <!-- PROFILE HEADER -->
   <div class="profile-header">
     <div class="profile-info">
       <h1 id="profileName">Loading...</h1>
       <div class="handle" id="profileHandle">@user</div>
-      <div class="bio-text" id="profileBio">No bio yet. Click Edit Profile to add one.</div>
+      <div class="bio-text" id="profileBio">No bio yet.</div>
       <div class="stats-row">
         <div class="stat"><div class="num" id="statPosts">0</div><div class="label">Posts</div></div>
         <div class="stat"><div class="num" id="statFollowers">0</div><div class="label">Followers</div></div>
         <div class="stat"><div class="num" id="statFollowing">0</div><div class="label">Following</div></div>
       </div>
     </div>
-    <button class="edit-btn" onclick="openEditModal()">✏️ Edit Profile</button>
+    <div class="profile-btns">
+      <button class="btn btn-primary" onclick="openEditModal()">✏️ Edit Profile</button>
+      <button class="btn btn-ghost" onclick="logout()">🚪</button>
+    </div>
   </div>
 
+  <!-- TABS -->
   <div class="tabs">
     <div class="tab active" onclick="switchTab('posts',this)">📷 Posts</div>
     <div class="tab" onclick="switchTab('reels',this)">🎬 Reels</div>
     <div class="tab" onclick="switchTab('saved',this)">🔖 Saved</div>
   </div>
 
-  <div id="postsTab">
-    <div class="posts-grid" id="postsGrid">
-      <div class="post-thumb">🌸</div>
-      <div class="post-thumb">🎨</div>
-      <div class="post-thumb">✨</div>
-    </div>
+  <div id="postsGrid" class="posts-grid"></div>
+  <div id="reelsGrid" class="posts-grid" style="display:none"></div>
+  <div id="savedGrid" style="display:none;text-align:center;padding:3rem;color:var(--muted);">
+    <div style="font-size:2.5rem;margin-bottom:.8rem">🔖</div>
+    <p>No saved posts yet</p>
   </div>
-  <div id="reelsTab" style="display:none;text-align:center;padding:3rem;color:var(--muted);">No reels yet. Share your first reel!</div>
-  <div id="savedTab" style="display:none;text-align:center;padding:3rem;color:var(--muted);">No saved posts yet.</div>
 </div>
 
-<!-- Edit Modal -->
+<!-- EDIT MODAL -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
+    <div class="modal-handle"></div>
     <h3>✏️ Edit Profile</h3>
     <div class="alert success" id="saveSuccess">Profile saved! 🌸</div>
     <div class="alert error" id="saveError"></div>
-    <div class="form-group"><label>Full Name</label><input type="text" id="editName" placeholder="Your name"/></div>
-    <div class="form-group"><label>Username</label><input type="text" id="editUsername" placeholder="@username"/></div>
-    <div class="form-group"><label>Bio</label><textarea id="editBio" placeholder="Tell the world about yourself..." rows="3"></textarea></div>
-    <div class="form-group"><label>Date of Birth</label><input type="date" id="editDob"/></div>
-    <div class="form-group"><label>Mobile Number</label><input type="tel" id="editMobile" placeholder="+91 9876543210"/></div>
     <div class="form-group">
-      <label>Preferred Language</label>
+      <label class="form-label">Full Name</label>
+      <input type="text" id="editName" placeholder="Your full name"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input type="text" id="editUsername" placeholder="@username"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Bio</label>
+      <textarea id="editBio" placeholder="Tell the world about yourself..." maxlength="150" oninput="document.getElementById('bioCount').textContent=this.value.length+'/150'"></textarea>
+      <div class="char-count" id="bioCount">0/150</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date of Birth</label>
+      <input type="date" id="editDob"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mobile Number</label>
+      <input type="tel" id="editMobile" placeholder="+91 9876543210"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Location</label>
+      <input type="text" id="editLocation" placeholder="City, Country"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Preferred Language</label>
       <select id="editLang">
-        <option value="en">English</option><option value="hi">हिंदी</option>
-        <option value="ta">தமிழ்</option><option value="te">తెలుగు</option>
-        <option value="kn">ಕನ್ನಡ</option><option value="ml">മലയാളം</option>
-        <option value="fr">Français</option><option value="es">Español</option>
+        <option value="en">🇬🇧 English</option><option value="hi">🇮🇳 हिंदी</option>
+        <option value="ta">🇮🇳 தமிழ்</option><option value="te">🇮🇳 తెలుగు</option>
+        <option value="kn">🇮🇳 ಕನ್ನಡ</option><option value="ml">🇮🇳 മലയാളം</option>
+        <option value="mr">🇮🇳 मराठी</option><option value="bn">🇧🇩 বাংলা</option>
+        <option value="fr">🇫🇷 Français</option><option value="es">🇪🇸 Español</option>
+        <option value="ar">🇸🇦 العربية</option><option value="zh">🇨🇳 中文</option>
       </select>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveProfile()">💾 Save Profile</button>
+      <button class="modal-btn modal-btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveProfile()">💾 Save</button>
     </div>
   </div>
 </div>
 
 <script>
-let sb = null;
-let currentUser = null;
+let sb = null, currentUser = null, currentProfile = null;
 
 async function boot() {
   try {
@@ -164,78 +224,166 @@ async function boot() {
     currentUser = session.user;
     document.getElementById('loadingScreen').style.display = 'none';
     await loadProfile();
-  } catch (err) {
-    document.getElementById('loadingScreen').innerHTML = `<div style="color:#ff4d4d">Failed to load: ${err.message}</div>`;
+    await loadPosts();
+  } catch(err) {
+    document.getElementById('loadingScreen').innerHTML = `<div style="color:#ff4d4d;text-align:center;padding:2rem">${err.message}</div>`;
   }
 }
 boot();
 
 async function loadProfile() {
-  const { data: p } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
-  if (p) {
-    document.getElementById('profileName').textContent = p.full_name || 'Sweety User';
-    document.getElementById('profileHandle').textContent = '@' + (p.username || currentUser.email.split('@')[0]);
-    document.getElementById('profileBio').textContent = p.bio || 'No bio yet. Click Edit Profile to add one.';
-    document.getElementById('statFollowers').textContent = p.followers_count || 0;
-    document.getElementById('statFollowing').textContent = p.following_count || 0;
-    if (p.avatar_url) { document.getElementById('avatarImg').src = p.avatar_url; document.getElementById('avatarImg').style.display = 'block'; document.getElementById('avatarEmoji').style.display = 'none'; }
-    if (p.cover_url) { document.getElementById('coverImg').src = p.cover_url; document.getElementById('coverImg').style.display = 'block'; }
-    document.getElementById('editName').value = p.full_name || '';
-    document.getElementById('editUsername').value = p.username || '';
-    document.getElementById('editBio').value = p.bio || '';
-    document.getElementById('editDob').value = p.dob || '';
-    document.getElementById('editMobile').value = p.mobile || '';
-    document.getElementById('editLang').value = p.preferred_lang || 'en';
+  const { data: p, error } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  if (error || !p) return;
+  currentProfile = p;
+
+  document.getElementById('profileName').textContent = p.full_name || 'Sweety User';
+  document.getElementById('profileHandle').textContent = '@' + (p.username || currentUser.email.split('@')[0]);
+  document.getElementById('profileBio').textContent = p.bio || 'No bio yet. Click Edit Profile to add one.';
+  document.getElementById('statFollowers').textContent = p.followers_count || 0;
+  document.getElementById('statFollowing').textContent = p.following_count || 0;
+  document.getElementById('statPosts').textContent = p.posts_count || 0;
+
+  // Avatar
+  if (p.avatar_url) {
+    const img = document.getElementById('avatarImg');
+    img.src = p.avatar_url; img.style.display = 'block';
+    document.getElementById('avatarEmoji').style.display = 'none';
   }
+  // Cover
+  if (p.cover_url) {
+    const img = document.getElementById('coverImg');
+    img.src = p.cover_url; img.style.display = 'block';
+  }
+
+  // Pre-fill edit form
+  document.getElementById('editName').value = p.full_name || '';
+  document.getElementById('editUsername').value = p.username || '';
+  document.getElementById('editBio').value = p.bio || '';
+  document.getElementById('bioCount').textContent = (p.bio || '').length + '/150';
+  document.getElementById('editDob').value = p.dob || '';
+  document.getElementById('editMobile').value = p.mobile || '';
+  document.getElementById('editLocation').value = p.location || '';
+  document.getElementById('editLang').value = p.preferred_lang || 'en';
 }
 
+async function loadPosts() {
+  const { data: posts } = await sb.from('posts').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  const photoPosts = (posts || []).filter(p => p.post_type !== 'reel');
+  const reelPosts = (posts || []).filter(p => p.post_type === 'reel');
+
+  renderGrid('postsGrid', photoPosts);
+  renderGrid('reelsGrid', reelPosts);
+}
+
+function renderGrid(gridId, posts) {
+  const grid = document.getElementById(gridId);
+  if (!posts || posts.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">📸</div><p>No posts yet</p></div>`;
+    return;
+  }
+  grid.innerHTML = '';
+  posts.forEach(post => {
+    const div = document.createElement('div'); div.className = 'post-thumb';
+    if (post.image_url) {
+      if (post.post_type === 'reel') {
+        div.innerHTML = `<video src="${post.image_url}" muted></video><span class="reel-icon">🎬</span>`;
+      } else {
+        div.innerHTML = `<img src="${post.image_url}" loading="lazy"/>`;
+      }
+    } else {
+      div.style.cssText = 'background:var(--dark3);display:flex;align-items:center;justify-content:center;font-size:1.5rem;';
+      div.textContent = '📝';
+    }
+    div.innerHTML += `<div class="overlay"><span>❤️ ${post.likes_count||0}</span><span>💬 ${post.comments_count||0}</span></div>`;
+    div.onclick = () => viewPost(post);
+    grid.appendChild(div);
+  });
+}
+
+function viewPost(post) {
+  alert(`${post.caption || 'No caption'}\n\n❤️ ${post.likes_count||0} likes  💬 ${post.comments_count||0} comments`);
+}
+
+// ── UPLOAD MEDIA ─────────────────────────────────────────
+async function uploadMedia(input, type) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      // Show preview immediately
+      if (type === 'avatar') {
+        document.getElementById('avatarImg').src = e.target.result;
+        document.getElementById('avatarImg').style.display = 'block';
+        document.getElementById('avatarEmoji').style.display = 'none';
+      } else {
+        document.getElementById('coverImg').src = e.target.result;
+        document.getElementById('coverImg').style.display = 'block';
+      }
+
+      // Upload to Supabase via /api/upload
+      const uploadRes = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileBase64: e.target.result,
+          fileName: file.name,
+          folder: `${type}s/${currentUser.id}`,
+          contentType: file.type
+        })
+      });
+      const data = await uploadRes.json();
+      if (!data.success) throw new Error(data.error);
+
+      // Save URL to profile
+      const updateData = type === 'avatar'
+        ? { avatar_url: data.url }
+        : { cover_url: data.url };
+      const { error } = await sb.from('profiles').update(updateData).eq('id', currentUser.id);
+      if (error) throw error;
+
+      console.log(`${type} uploaded: ${data.url}`);
+    } catch(err) {
+      alert('Upload failed: ' + err.message);
+    }
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+// ── SAVE PROFILE ─────────────────────────────────────────
 async function saveProfile() {
   const updates = {
-    full_name: document.getElementById('editName').value,
-    username: document.getElementById('editUsername').value.replace('@', ''),
-    bio: document.getElementById('editBio').value,
+    full_name: document.getElementById('editName').value.trim(),
+    username: document.getElementById('editUsername').value.replace('@','').trim(),
+    bio: document.getElementById('editBio').value.trim(),
     dob: document.getElementById('editDob').value,
-    mobile: document.getElementById('editMobile').value,
+    mobile: document.getElementById('editMobile').value.trim(),
+    location: document.getElementById('editLocation').value.trim(),
     preferred_lang: document.getElementById('editLang').value,
     updated_at: new Date().toISOString()
   };
-  const { error } = await sb.from('profiles').update(updates).eq('id', currentUser.id);
-  if (error) { document.getElementById('saveError').textContent = error.message; document.getElementById('saveError').style.display = 'block'; }
-  else { document.getElementById('saveSuccess').style.display = 'block'; await loadProfile(); setTimeout(() => { closeEditModal(); document.getElementById('saveSuccess').style.display = 'none'; }, 2000); }
-}
-
-async function uploadAvatar(input) {
-  const file = input.files[0]; if (!file) return;
-  const path = `avatars/${currentUser.id}/${Date.now()}.${file.name.split('.').pop()}`;
-  const { error } = await sb.storage.from('sweety-media').upload(path, file, { upsert: true });
-  if (!error) {
-    const { data } = sb.storage.from('sweety-media').getPublicUrl(path);
-    await sb.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', currentUser.id);
-    document.getElementById('avatarImg').src = data.publicUrl;
-    document.getElementById('avatarImg').style.display = 'block';
-    document.getElementById('avatarEmoji').style.display = 'none';
+  try {
+    const { error } = await sb.from('profiles').update(updates).eq('id', currentUser.id);
+    if (error) throw error;
+    document.getElementById('saveSuccess').style.display = 'block';
+    await loadProfile();
+    setTimeout(() => { document.getElementById('saveSuccess').style.display = 'none'; closeModal(); }, 2000);
+  } catch(err) {
+    document.getElementById('saveError').textContent = err.message;
+    document.getElementById('saveError').style.display = 'block';
   }
 }
 
-async function uploadCover(input) {
-  const file = input.files[0]; if (!file) return;
-  const path = `covers/${currentUser.id}/${Date.now()}.${file.name.split('.').pop()}`;
-  const { error } = await sb.storage.from('sweety-media').upload(path, file, { upsert: true });
-  if (!error) {
-    const { data } = sb.storage.from('sweety-media').getPublicUrl(path);
-    await sb.from('profiles').update({ cover_url: data.publicUrl }).eq('id', currentUser.id);
-    document.getElementById('coverImg').src = data.publicUrl;
-    document.getElementById('coverImg').style.display = 'block';
-  }
-}
-
-function openEditModal() { document.getElementById('editModal').classList.add('open'); }
-function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }
 function switchTab(tab, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); el.classList.add('active');
-  ['postsTab', 'reelsTab', 'savedTab'].forEach(t => document.getElementById(t).style.display = 'none');
-  document.getElementById(tab + 'Tab').style.display = 'block';
+  document.getElementById('postsGrid').style.display = tab === 'posts' ? 'grid' : 'none';
+  document.getElementById('reelsGrid').style.display = tab === 'reels' ? 'grid' : 'none';
+  document.getElementById('savedGrid').style.display = tab === 'saved' ? 'block' : 'none';
 }
-document.getElementById('editModal').onclick = function(e) { if (e.target === this) closeEditModal(); };
+function openEditModal() { document.getElementById('editModal').classList.add('open'); }
+function closeModal() { document.getElementById('editModal').classList.remove('open'); }
+document.getElementById('editModal').onclick = (e) => { if (e.target === document.getElementById('editModal')) closeModal(); };
+async function logout() { await sb.auth.signOut(); window.location.href = 'login.html'; }
 </script>
 </body></html>
+
