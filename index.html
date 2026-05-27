@@ -2,132 +2,775 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>AI Sweety — Your All-in-One AI Companion</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Social — AI Sweety</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
-:root{--pink:#ff6b9d;--pink2:#ff4081;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--dark3:#1a1a2e;--card:#16213e;--text:#f0f0ff;--muted:#8888aa;--gold:#ffd700;}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
-.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;}
-.orb{position:absolute;border-radius:50%;filter:blur(80px);animation:float 8s ease-in-out infinite;}
-.orb1{width:400px;height:400px;background:rgba(168,85,247,.25);top:-100px;left:-100px;}
-.orb2{width:350px;height:350px;background:rgba(255,107,157,.2);bottom:-50px;right:-80px;animation-delay:3s;}
-.orb3{width:250px;height:250px;background:rgba(255,64,129,.15);top:50%;left:50%;animation-delay:5s;}
-@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-30px);}}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 2rem;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.05);}
-.logo{display:flex;align-items:center;gap:.6rem;font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;-webkit-text-fill-color:initial;}
-.nav-btns{display:flex;gap:1rem;}
-.btn{padding:.6rem 1.4rem;border-radius:50px;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .3s;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;}
-.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--text);}
-.btn-ghost:hover{border-color:var(--pink);color:var(--pink);}
-.btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,107,157,.4);}
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;z-index:1;}
-.badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,107,157,.1);border:1px solid rgba(255,107,157,.3);color:var(--pink);padding:.4rem 1rem;border-radius:50px;font-size:.8rem;font-weight:600;margin-bottom:2rem;}
-.hero h1{font-family:'Playfair Display',serif;font-size:clamp(3rem,8vw,6rem);font-weight:900;line-height:1.05;margin-bottom:1.5rem;}
-.hero h1 span{background:linear-gradient(135deg,var(--pink),var(--purple),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.hero p{font-size:clamp(1rem,2.5vw,1.2rem);color:var(--muted);max-width:650px;line-height:1.8;margin-bottom:2.5rem;}
-.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;}
-.btn-lg{padding:.9rem 2.2rem;font-size:1rem;}
-.lang-bar{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1rem 1.5rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:2.5rem;}
-.lang-bar span.label{color:var(--muted);font-size:.85rem;}
-.lang-chip{background:rgba(255,107,157,.08);border:1px solid rgba(255,107,157,.2);color:var(--text);padding:.3rem .8rem;border-radius:50px;font-size:.78rem;cursor:pointer;transition:all .2s;}
-.lang-chip:hover,.lang-chip.active{background:var(--pink);border-color:var(--pink);color:#fff;}
-.features{padding:5rem 2rem;position:relative;z-index:1;}
-.section-title{text-align:center;margin-bottom:3.5rem;}
-.section-title h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;margin-bottom:.75rem;}
-.section-title p{color:var(--muted);font-size:1rem;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.5rem;max-width:1100px;margin:0 auto;}
-.card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:2rem;transition:all .3s;}
-.card:hover{transform:translateY(-6px);border-color:rgba(255,107,157,.3);}
-.card-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:1.2rem;}
-.card h3{font-size:1.05rem;font-weight:600;margin-bottom:.6rem;}
-.card p{color:var(--muted);font-size:.88rem;line-height:1.7;}
-.steps{padding:5rem 2rem;background:var(--dark2);position:relative;z-index:1;}
-.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;max-width:900px;margin:0 auto;}
-.step{text-align:center;}
-.step-num{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;margin:0 auto 1rem;}
-.step h3{font-size:1rem;font-weight:600;margin-bottom:.5rem;}
-.step p{color:var(--muted);font-size:.88rem;line-height:1.6;}
-.cta{padding:6rem 2rem;text-align:center;position:relative;z-index:1;}
-.cta-box{background:linear-gradient(135deg,rgba(255,107,157,.12),rgba(168,85,247,.12));border:1px solid rgba(255,107,157,.2);border-radius:28px;padding:4rem 2rem;max-width:700px;margin:0 auto;}
-.cta-box h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:900;margin-bottom:1rem;}
-.cta-box p{color:var(--muted);margin-bottom:2rem;}
-footer{background:var(--dark2);border-top:1px solid rgba(255,255,255,.05);padding:2rem;text-align:center;color:var(--muted);font-size:.85rem;position:relative;z-index:1;}
-.demo-chat{background:var(--dark3);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:1.5rem;max-width:520px;margin:2.5rem auto 0;text-align:left;}
-.demo-msg{display:flex;gap:.8rem;margin-bottom:1rem;align-items:flex-start;}
-.demo-avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
-.demo-bubble{background:rgba(255,255,255,.06);border-radius:12px;padding:.7rem 1rem;font-size:.88rem;line-height:1.5;}
-.demo-msg.sweety .demo-avatar{background:linear-gradient(135deg,var(--pink),var(--purple));}
-.demo-msg.user .demo-avatar{background:rgba(255,255,255,.1);}
-.demo-msg.sweety .demo-bubble{background:rgba(255,107,157,.1);border:1px solid rgba(255,107,157,.15);}
-.watermark{font-size:.72rem;color:var(--pink);margin-top:.4rem;opacity:.7;}
-.cursor{display:inline-block;width:2px;height:14px;background:var(--pink);animation:blink .8s infinite;vertical-align:middle;}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+:root{--pink:#ff6b9d;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--card:#16213e;--text:#f0f0ff;--muted:#8888aa;--success:#4dff91;--error:#ff4d4d;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:80px;}
+.topnav{position:sticky;top:0;z-index:100;padding:.8rem 1rem;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06);}
+.logo{display:flex;align-items:center;gap:.5rem;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+.logo-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;-webkit-text-fill-color:initial;}
+.nav-links{display:flex;gap:.2rem;}
+.nav-link{padding:.35rem .7rem;border-radius:50px;font-size:.8rem;text-decoration:none;color:var(--muted);}
+.nav-link.active{color:var(--pink);}
+.nav-right{display:flex;gap:.4rem;}
+.nav-icon-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;text-decoration:none;}
+.nav-icon-btn:hover{background:rgba(255,107,157,.15);}
+
+/* LAYOUT */
+.layout{max-width:935px;margin:0 auto;padding:1rem;display:grid;grid-template-columns:1fr 290px;gap:1.5rem;}
+@media(max-width:768px){.layout{grid-template-columns:1fr;padding:.8rem;}.right-panel{display:none;}}
+
+/* STORIES */
+.stories-wrap{background:var(--dark2);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:.8rem;display:flex;gap:.7rem;overflow-x:auto;margin-bottom:1rem;scrollbar-width:none;}
+.stories-wrap::-webkit-scrollbar{display:none;}
+.story-item{display:flex;flex-direction:column;align-items:center;gap:.3rem;cursor:pointer;flex-shrink:0;}
+.story-ring{width:58px;height:58px;border-radius:50%;padding:2px;background:linear-gradient(135deg,var(--pink),var(--purple));}
+.story-ring.add{background:rgba(255,255,255,.1);}
+.story-ring.seen{background:rgba(255,255,255,.2);}
+.story-av{width:100%;height:100%;border-radius:50%;background:var(--dark);border:2px solid var(--dark2);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.story-av img{width:100%;height:100%;object-fit:cover;}
+.story-name{font-size:.65rem;color:var(--muted);text-align:center;max-width:58px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* NEW POST BOX */
+.new-post-box{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:.9rem;margin-bottom:1rem;}
+.post-top{display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem;}
+.my-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.88rem;overflow:hidden;flex-shrink:0;}
+.my-av img{width:100%;height:100%;object-fit:cover;}
+.fake-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:.55rem 1rem;color:var(--muted);font-size:.85rem;cursor:pointer;}
+.type-btns{display:flex;gap:.4rem;flex-wrap:wrap;}
+.type-btn{display:flex;align-items:center;gap:.3rem;padding:.35rem .8rem;border-radius:50px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:var(--muted);font-size:.78rem;cursor:pointer;transition:.2s;}
+.type-btn:hover{border-color:var(--pink);color:var(--pink);}
+
+/* POST CARD */
+.post-card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;margin-bottom:1rem;}
+.post-head{display:flex;align-items:center;gap:.7rem;padding:.85rem 1rem;}
+.p-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+.p-av img{width:100%;height:100%;object-fit:cover;}
+.p-name{font-size:.88rem;font-weight:600;}
+.p-time{font-size:.72rem;color:var(--muted);}
+.follow-btn{padding:.28rem .85rem;border-radius:50px;font-size:.76rem;font-weight:600;cursor:pointer;border:none;transition:.2s;}
+.follow-btn.nf{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
+.follow-btn.fl{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid rgba(255,255,255,.1);}
+.post-img{width:100%;max-height:520px;object-fit:cover;display:block;}
+.post-body{padding:.7rem 1rem;}
+.post-caption{font-size:.87rem;line-height:1.6;}
+.hashtag{color:var(--purple);}
+.mention{color:var(--pink);}
+.post-foot{display:flex;align-items:center;gap:.6rem;padding:.55rem 1rem;border-top:1px solid rgba(255,255,255,.05);}
+.act{display:flex;align-items:center;gap:.3rem;cursor:pointer;font-size:.84rem;color:var(--muted);background:none;border:none;transition:.2s;padding:.3rem;}
+.act:hover{color:var(--pink);}
+.act.liked{color:#ff4d4d;}
+.act.saved{color:var(--purple);}
+
+/* RIGHT PANEL */
+.right-panel{display:flex;flex-direction:column;gap:1rem;}
+.panel-card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.1rem;}
+.panel-title{font-size:.76rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.8rem;}
+.sug-item{display:flex;align-items:center;gap:.65rem;margin-bottom:.75rem;}
+.sug-av{width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.85rem;}
+.sug-av img{width:100%;height:100%;object-fit:cover;}
+.sug-name{font-size:.82rem;font-weight:600;}
+.sug-sub{font-size:.71rem;color:var(--muted);}
+.follow-sm{padding:.22rem .65rem;border-radius:50px;font-size:.73rem;font-weight:600;cursor:pointer;border:none;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
+
+/* FOLLOWING SECTION */
+.following-section{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.1rem;margin-bottom:1rem;}
+.following-row{display:flex;gap:.5rem;overflow-x:auto;scrollbar-width:none;padding-bottom:.3rem;}
+.following-row::-webkit-scrollbar{display:none;}
+.following-chip{display:flex;flex-direction:column;align-items:center;gap:.3rem;flex-shrink:0;cursor:pointer;}
+.following-chip-av{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:.9rem;border:2px solid rgba(255,107,157,.3);}
+.following-chip-av img{width:100%;height:100%;object-fit:cover;}
+.following-chip-name{font-size:.68rem;color:var(--muted);text-align:center;max-width:50px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* MODALS */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:500;display:none;align-items:flex-end;justify-content:center;}
+.modal-bg.open{display:flex;}
+@media(min-width:600px){.modal-bg{align-items:center;}}
+.modal-box{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;padding:1.4rem;}
+@media(min-width:600px){.modal-box{border-radius:20px;}}
+.drag-bar{width:40px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin:0 auto .8rem;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:1rem;}
+.status-bar{padding:.55rem .9rem;border-radius:8px;font-size:.82rem;margin-bottom:.7rem;display:none;text-align:center;}
+.status-bar.err{background:rgba(255,77,77,.12);border:1px solid rgba(255,77,77,.25);color:var(--error);}
+.status-bar.ok{background:rgba(77,255,145,.1);border:1px solid rgba(77,255,145,.25);color:var(--success);}
+.status-bar.loading{background:rgba(255,107,157,.08);border:1px solid rgba(255,107,157,.2);color:var(--pink);}
+.upload-zone{border:2px dashed rgba(255,107,157,.3);border-radius:12px;padding:1.4rem;text-align:center;cursor:pointer;transition:.2s;margin-bottom:.7rem;}
+.upload-zone:hover{border-color:var(--pink);background:rgba(255,107,157,.04);}
+.prev-img{width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin-bottom:.7rem;display:none;}
+.modal-ta{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:.8rem;color:var(--text);font-size:.88rem;font-family:'DM Sans',sans-serif;resize:none;outline:none;min-height:80px;}
+.modal-ta:focus{border-color:var(--pink);}
+.modal-acts{display:flex;gap:.7rem;margin-top:.9rem;}
+.mbtn{flex:1;padding:.75rem;border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer;border:none;}
+.mbtn-p{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
+.mbtn-p:disabled{opacity:.5;cursor:not-allowed;}
+.mbtn-g{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);}
+
+/* STORY VIEWER */
+.sv-bg{position:fixed;inset:0;background:#000;z-index:600;display:none;align-items:center;justify-content:center;}
+.sv-bg.open{display:flex;}
+.sv-box{width:100%;max-width:380px;height:100vh;position:relative;background:#111;}
+@media(min-width:600px){.sv-box{height:82vh;border-radius:16px;overflow:hidden;}}
+.sv-prog{display:flex;gap:3px;padding:.6rem;position:absolute;top:0;left:0;right:0;z-index:2;}
+.sv-seg{flex:1;height:3px;background:rgba(255,255,255,.25);border-radius:2px;overflow:hidden;}
+.sv-fill{height:100%;background:#fff;width:0;}
+.sv-head{display:flex;align-items:center;gap:.65rem;padding:.4rem .8rem;position:absolute;top:34px;left:0;right:0;z-index:2;}
+.sv-av{width:30px;height:30px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.8rem;}
+.sv-av img{width:100%;height:100%;object-fit:cover;}
+.sv-close{position:absolute;top:.8rem;right:.8rem;z-index:3;background:rgba(0,0,0,.4);border:none;color:#fff;font-size:1.3rem;cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.sv-media{width:100%;height:100%;object-fit:cover;}
+.sv-cap{position:absolute;bottom:0;left:0;right:0;padding:1.2rem 1rem;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#fff;font-size:.88rem;}
+/* Story viewers panel */
+.sv-viewers-btn{position:absolute;bottom:3.5rem;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:none;color:#fff;padding:.4rem 1rem;border-radius:50px;font-size:.78rem;cursor:pointer;display:flex;align-items:center;gap:.4rem;}
+.sv-viewers-panel{position:absolute;bottom:0;left:0;right:0;background:rgba(20,20,30,.95);backdrop-filter:blur(12px);border-radius:16px 16px 0 0;padding:1rem;max-height:60%;overflow-y:auto;z-index:4;display:none;}
+.sv-viewers-panel.open{display:block;}
+.sv-view-item{display:flex;align-items:center;gap:.7rem;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.sv-view-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.85rem;overflow:hidden;}
+.sv-view-av img{width:100%;height:100%;object-fit:cover;}
+.sv-view-name{font-size:.85rem;font-weight:600;}
+.sv-view-time{font-size:.72rem;color:var(--muted);}
+
+/* COMMENTS */
+.cm-list{max-height:300px;overflow-y:auto;}
+.cm-item{display:flex;gap:.65rem;margin-bottom:.8rem;}
+.cm-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0;overflow:hidden;}
+.cm-av img{width:100%;height:100%;object-fit:cover;}
+.cm-name{font-size:.8rem;font-weight:600;}
+.cm-text{font-size:.83rem;color:var(--muted);margin-top:.12rem;line-height:1.5;}
+.cm-input-row{display:flex;gap:.5rem;margin-top:1rem;padding-top:.9rem;border-top:1px solid rgba(255,255,255,.06);}
+.cm-input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:.55rem 1rem;color:var(--text);font-size:.85rem;outline:none;font-family:'DM Sans',sans-serif;}
+.cm-input:focus{border-color:var(--pink);}
+.cm-send{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* SPIN */
+.spin{width:34px;height:34px;border:3px solid rgba(255,107,157,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-screen{position:fixed;inset:0;background:var(--dark);display:flex;align-items:center;justify-content:center;z-index:999;}
+.mini-spin{width:16px;height:16px;border:2px solid rgba(255,107,157,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:middle;}
+#postFile,#storyFile{display:none;}
 </style>
 </head>
 <body>
-<div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
-<nav>
-  <div class="logo"><div class="logo-icon">🌸</div>AI Sweety</div>
-  <div class="nav-btns">
-    <a href="login.html" class="btn btn-ghost">Login</a>
-    <a href="register.html" class="btn btn-primary">Get Started</a>
+<div class="loading-screen" id="loadingScreen"><div class="spin"></div></div>
+
+<nav class="topnav">
+  <a href="index.html" class="logo"><div class="logo-icon">🌸</div>AI Sweety</a>
+  <div class="nav-links">
+    <a href="chat.html" class="nav-link">🤖</a>
+    <a href="social.html" class="nav-link active">📸 Social</a>
+    <a href="messages.html" class="nav-link">💬</a>
+    <a href="profile.html" class="nav-link">👤</a>
+  </div>
+  <div class="nav-right">
+    <a href="messages.html" class="nav-icon-btn" title="Messages">✉️</a>
+    <button class="nav-icon-btn" onclick="openPostModal('photo')" title="New Post">➕</button>
   </div>
 </nav>
-<section class="hero">
-  <div class="badge">✨ All-in-One AI Platform — Free to Use</div>
-  <h1>Meet <span>AI Sweety</span><br/>Your Smartest Friend</h1>
-  <p>Chat, create images, solve legal & IT problems, get live news, and connect with people — all in one beautiful platform, in 15 languages.</p>
-  <div class="hero-btns">
-    <a href="register.html" class="btn btn-primary btn-lg">🚀 Start for Free</a>
-    <a href="chat.html" class="btn btn-ghost btn-lg">💬 Try Sweety</a>
+
+<div class="layout">
+  <div>
+    <!-- STORIES -->
+    <div class="stories-wrap" id="storiesWrap">
+      <div class="story-item" onclick="openStoryModal()">
+        <div class="story-ring add"><div class="story-av" id="myStoryAv">➕</div></div>
+        <span class="story-name">Your Story</span>
+      </div>
+    </div>
+
+    <!-- FOLLOWING SECTION -->
+    <div class="following-section" id="followingSection" style="display:none">
+      <div class="panel-title" style="margin-bottom:.7rem">👥 Following</div>
+      <div class="following-row" id="followingRow"></div>
+    </div>
+
+    <!-- NEW POST -->
+    <div class="new-post-box">
+      <div class="post-top">
+        <div class="my-av" id="myAvatar">🌸</div>
+        <div class="fake-input" onclick="openPostModal('photo')">What's on your mind?</div>
+      </div>
+      <div class="type-btns">
+        <div class="type-btn" onclick="openPostModal('photo')">📷 Photo</div>
+        <div class="type-btn" onclick="openPostModal('reel')">🎬 Reel</div>
+        <div class="type-btn" onclick="openStoryModal()">📖 Story</div>
+      </div>
+    </div>
+
+    <!-- FEED -->
+    <div id="feed"><div style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></div></div>
   </div>
-  <div class="lang-bar">
-    <span class="label">🌐 Choose language:</span>
-    <span class="lang-chip active">English</span><span class="lang-chip">हिंदी</span><span class="lang-chip">தமிழ்</span>
-    <span class="lang-chip">తెలుగు</span><span class="lang-chip">ಕನ್ನಡ</span><span class="lang-chip">മലയാളം</span>
-    <span class="lang-chip">मराठी</span><span class="lang-chip">বাংলা</span><span class="lang-chip">ગુજરાતી</span>
-    <span class="lang-chip">ਪੰਜਾਬੀ</span><span class="lang-chip">اردو</span><span class="lang-chip">العربية</span>
-    <span class="lang-chip">Français</span><span class="lang-chip">Español</span><span class="lang-chip">中文</span>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="panel-card">
+      <div class="panel-title">Suggested For You</div>
+      <div id="suggestedList"><div class="mini-spin"></div></div>
+    </div>
+    <div class="panel-card" style="font-size:.75rem;color:var(--muted);line-height:2.1;">
+      © 2024 AI Sweety<br/>
+      <a href="chat.html" style="color:var(--pink)">Chat with Sweety 🌸</a><br/>
+      <a href="messages.html" style="color:var(--pink)">💬 Direct Messages</a>
+    </div>
   </div>
-  <div class="demo-chat">
-    <div class="demo-msg user"><div class="demo-avatar">👤</div><div class="demo-bubble">Sweety, help me understand my tenant rights.</div></div>
-    <div class="demo-msg sweety"><div class="demo-avatar">🌸</div><div class="demo-bubble">As a tenant, you have the right to a safe, habitable home. Your landlord must give notice before entry and cannot cut utilities as pressure. <span class="cursor"></span><div class="watermark">© AI Sweety</div></div></div>
+</div>
+
+<!-- POST MODAL -->
+<div class="modal-bg" id="postModal">
+  <div class="modal-box">
+    <div class="drag-bar"></div>
+    <div class="modal-title" id="postModalTitle">📷 Create Post</div>
+    <div class="status-bar" id="postStatus"></div>
+    <div class="upload-zone" onclick="document.getElementById('postFile').click()">
+      <div style="font-size:2.2rem;margin-bottom:.4rem" id="uploadIcon">📸</div>
+      <p style="color:var(--muted);font-size:.83rem" id="uploadHint">Tap to select photo or video</p>
+    </div>
+    <img id="postPrev" class="prev-img"/>
+    <textarea class="modal-ta" id="postCaption" placeholder="Write a caption... #hashtags @mentions"></textarea>
+    <div class="modal-acts">
+      <button class="mbtn mbtn-g" onclick="closeModal('postModal')">Cancel</button>
+      <button class="mbtn mbtn-p" id="postBtn" onclick="submitPost()">🌸 Share</button>
+    </div>
   </div>
-</section>
-<section class="features">
-  <div class="section-title"><h2>Everything you need, <span style="color:var(--pink)">in one place</span></h2><p>Sweety is more than a chatbot — it's your all-in-one AI platform</p></div>
-  <div class="grid">
-    <div class="card"><div class="card-icon" style="background:rgba(255,107,157,.15);">🤖</div><h3>AI Chat Assistant</h3><p>Ask anything — legal cases, IT problems, cooking, studies. Sweety has answers.</p></div>
-    <div class="card"><div class="card-icon" style="background:rgba(168,85,247,.15);">🎨</div><h3>AI Image Generation</h3><p>Describe any image and Sweety creates it instantly — portraits, art, logos and more.</p></div>
-    <div class="card"><div class="card-icon" style="background:rgba(255,215,0,.12);">📰</div><h3>Live News & Web Search</h3><p>Get real-time news and web results powered by Tavily search engine.</p></div>
-    <div class="card"><div class="card-icon" style="background:rgba(0,200,150,.12);">⚖️</div><h3>Legal & IT Help</h3><p>AI-powered advice for legal questions, coding bugs, and professional fields.</p></div>
-    <div class="card"><div class="card-icon" style="background:rgba(255,107,157,.1);">📸</div><h3>Social Platform</h3><p>Follow people, share stories, post reels — Instagram-style but powered by AI.</p></div>
-    <div class="card"><div class="card-icon" style="background:rgba(100,150,255,.12);">📂</div><h3>Upload & Analyze</h3><p>Upload photos, documents, files. Sweety reads and solves problems from your uploads.</p></div>
-    <div class="card"><div class="card-icon" style="background:rgba(255,150,50,.12);">🌐</div><h3>15 Languages</h3><p>Chat in English, Hindi, Tamil, Telugu, Kannada, Malayalam and 9 more languages.</p></div>
-    <div class="card"><div class="card-icon" style="background:rgba(168,85,247,.1);">🔒</div><h3>Secure & Private</h3><p>Protected with Supabase authentication — your data stays safe always.</p></div>
+</div>
+
+<!-- STORY MODAL -->
+<div class="modal-bg" id="storyModal">
+  <div class="modal-box">
+    <div class="drag-bar"></div>
+    <div class="modal-title">📖 Add Story</div>
+    <div class="status-bar" id="storyStatus"></div>
+    <div class="upload-zone" onclick="document.getElementById('storyFile').click()">
+      <div style="font-size:2.2rem;margin-bottom:.4rem">📸</div>
+      <p style="color:var(--muted);font-size:.83rem">Tap to select photo for your story</p>
+    </div>
+    <img id="storyPrev" class="prev-img"/>
+    <textarea class="modal-ta" id="storyCaption" placeholder="Add caption... (optional)" style="min-height:55px;"></textarea>
+    <div class="modal-acts">
+      <button class="mbtn mbtn-g" onclick="closeModal('storyModal')">Cancel</button>
+      <button class="mbtn mbtn-p" id="storyBtn" onclick="submitStory()">📖 Add Story</button>
+    </div>
   </div>
-</section>
-<section class="steps">
-  <div class="section-title"><h2>Get started in <span style="color:var(--pink)">3 steps</span></h2><p>It only takes a minute to join</p></div>
-  <div class="steps-grid">
-    <div class="step"><div class="step-num">1</div><h3>Register</h3><p>Sign up with your name, Gmail, password and mobile number. Quick and free.</p></div>
-    <div class="step"><div class="step-num">2</div><h3>Choose Language</h3><p>Pick from 15 languages. Sweety will always respond in your preferred language.</p></div>
-    <div class="step"><div class="step-num">3</div><h3>Start Chatting!</h3><p>Ask questions, generate images, post on social — Sweety is ready 24/7.</p></div>
+</div>
+
+<!-- COMMENTS MODAL -->
+<div class="modal-bg" id="commentsModal">
+  <div class="modal-box">
+    <div class="drag-bar"></div>
+    <div class="modal-title">💬 Comments</div>
+    <div class="cm-list" id="cmList"></div>
+    <div class="cm-input-row">
+      <input class="cm-input" id="cmInput" placeholder="Add a comment..." onkeydown="if(event.key==='Enter')submitComment()"/>
+      <button class="cm-send" onclick="submitComment()">➤</button>
+    </div>
   </div>
-</section>
-<section class="cta">
-  <div class="cta-box">
-    <h2>Ready to meet <span style="color:var(--pink)">Sweety?</span> 🌸</h2>
-    <p>Join thousands of users solving real problems with AI. It's completely free to start.</p>
-    <a href="register.html" class="btn btn-primary btn-lg">Create Your Free Account →</a>
+</div>
+
+<!-- STORY VIEWER -->
+<div class="sv-bg" id="svBg">
+  <div class="sv-box">
+    <div class="sv-prog"><div class="sv-seg"><div class="sv-fill" id="svFill"></div></div></div>
+    <div class="sv-head">
+      <div class="sv-av" id="svAvatar">🌸</div>
+      <div>
+        <div style="font-size:.86rem;font-weight:600;color:#fff" id="svName">User</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.6)" id="svTime">Just now</div>
+      </div>
+    </div>
+    <button class="sv-close" onclick="closeSV()">✕</button>
+    <img id="svMedia" class="sv-media" src="" style="display:none"/>
+    <div id="svColorBg" style="width:100%;height:100%;background:linear-gradient(135deg,rgba(255,107,157,.3),rgba(168,85,247,.3));display:flex;align-items:center;justify-content:center;font-size:4rem;">🌸</div>
+    <div class="sv-cap" id="svCap"></div>
+    <!-- Viewers button (only for own stories) -->
+    <button class="sv-viewers-btn" id="svViewersBtn" style="display:none" onclick="toggleViewers()">
+      👁 <span id="svViewCount">0</span> viewers
+    </button>
+    <div class="sv-viewers-panel" id="svViewersPanel">
+      <div style="font-weight:700;margin-bottom:.7rem;font-size:.9rem">👁 Story Viewers</div>
+      <div id="svViewersList"></div>
+    </div>
   </div>
-</section>
-<footer><p>© 2024 AI Sweety — Built with ❤️ | All rights reserved</p><p style="margin-top:.4rem;">Powered by Groq · OpenRouter · Hugging Face · Supabase · Tavily</p></footer>
+</div>
+
+<input type="file" id="postFile" accept="image/*,video/*" onchange="onPostFile(this)"/>
+<input type="file" id="storyFile" accept="image/*" onchange="onStoryFile(this)"/>
+
 <script>
-document.querySelectorAll('.lang-chip').forEach(c=>{c.onclick=()=>{document.querySelectorAll('.lang-chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');};});
+let sb=null,cu=null,cp=null;
+let postFileData=null,storyFileData=null;
+let postType='photo',curCommentPost=null;
+let svTimer=null,curStory=null;
+
+async function boot(){
+  try{
+    const r=await fetch('/api/env');
+    const k=await r.json();
+    sb=supabase.createClient(k.SUPABASE_URL,k.SUPABASE_ANON_KEY);
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session){window.location.href='login.html';return;}
+    cu=session.user;
+    const {data:p}=await sb.from('profiles').select('*').eq('id',cu.id).single();
+    cp=p;
+    if(p?.avatar_url){
+      document.getElementById('myAvatar').innerHTML=`<img src="${p.avatar_url}"/>`;
+      document.getElementById('myStoryAv').innerHTML=`<img src="${p.avatar_url}"/>`;
+    }
+    document.getElementById('loadingScreen').style.display='none';
+    await Promise.all([loadStories(),loadFeed(),loadSuggested(),loadFollowing()]);
+  }catch(e){
+    document.getElementById('loadingScreen').innerHTML=`<div style="color:var(--error);text-align:center;padding:2rem">${e.message}</div>`;
+  }
+}
+boot();
+
+// ── UPLOAD ────────────────────────────────────────────────
+async function uploadFile(fd,folder){
+  const res=await fetch('/api/upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fileBase64:fd.base64,fileName:fd.name,folder,contentType:fd.type})});
+  const txt=await res.text();
+  let d; try{d=JSON.parse(txt);}catch(e){throw new Error('Upload error: '+txt.slice(0,80));}
+  if(!d.success) throw new Error(d.error||'Upload failed');
+  return d.url;
+}
+
+// ── STATUS ─────────────────────────────────────────────────
+function setStatus(id,type,msg){
+  const el=document.getElementById(id);
+  el.className='status-bar '+type;
+  el.innerHTML=msg;
+  el.style.display='block';
+}
+function clearStatus(id){document.getElementById(id).style.display='none';}
+
+// ── MODALS ─────────────────────────────────────────────────
+function openPostModal(type){
+  postType=type; postFileData=null;
+  document.getElementById('postPrev').style.display='none';
+  document.getElementById('postCaption').value='';
+  document.getElementById('uploadIcon').textContent='📸';
+  document.getElementById('uploadHint').textContent='Tap to select photo or video';
+  document.getElementById('postModalTitle').textContent=type==='reel'?'🎬 Create Reel':'📷 Create Post';
+  document.getElementById('postFile').accept=type==='reel'?'video/*':'image/*,video/*';
+  clearStatus('postStatus');
+  document.getElementById('postModal').classList.add('open');
+}
+function openStoryModal(){
+  storyFileData=null;
+  document.getElementById('storyPrev').style.display='none';
+  document.getElementById('storyCaption').value='';
+  clearStatus('storyStatus');
+  document.getElementById('storyModal').classList.add('open');
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+['postModal','storyModal','commentsModal'].forEach(id=>{
+  document.getElementById(id).onclick=e=>{if(e.target.id===id)closeModal(id);};
+});
+
+// ── FILE CHOOSE ────────────────────────────────────────────
+function onPostFile(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    postFileData={base64:e.target.result,name:f.name,type:f.type};
+    const p=document.getElementById('postPrev'); p.src=e.target.result; p.style.display='block';
+    document.getElementById('uploadIcon').textContent='✅';
+    document.getElementById('uploadHint').textContent=f.name.slice(0,28);
+  };
+  r.readAsDataURL(f); inp.value='';
+}
+function onStoryFile(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    storyFileData={base64:e.target.result,name:f.name,type:f.type};
+    const p=document.getElementById('storyPrev'); p.src=e.target.result; p.style.display='block';
+  };
+  r.readAsDataURL(f); inp.value='';
+}
+
+// ── SUBMIT POST ─────────────────────────────────────────────
+async function submitPost(){
+  const caption=document.getElementById('postCaption').value.trim();
+  if(!postFileData&&!caption){setStatus('postStatus','err','Add a photo or write something!');return;}
+  const btn=document.getElementById('postBtn'); btn.disabled=true;
+  setStatus('postStatus','loading','<span class="mini-spin"></span> Uploading...');
+  try{
+    let url=null;
+    if(postFileData){
+      setStatus('postStatus','loading','<span class="mini-spin"></span> Uploading media...');
+      url=await uploadFile(postFileData,`posts/${cu.id}`);
+    }
+    setStatus('postStatus','loading','<span class="mini-spin"></span> Saving post...');
+    const {error}=await sb.from('posts').insert({
+      user_id:cu.id, caption:caption||null,
+      image_url:url, post_type:postType,
+      is_public:true, likes_count:0, comments_count:0
+    });
+    if(error) throw new Error('DB error: '+error.message);
+    setStatus('postStatus','ok','✅ Posted successfully!');
+    setTimeout(()=>{closeModal('postModal');loadFeed();},1200);
+  }catch(e){setStatus('postStatus','err','❌ '+e.message);}
+  finally{btn.disabled=false;}
+}
+
+// ── SUBMIT STORY ────────────────────────────────────────────
+async function submitStory(){
+  if(!storyFileData){setStatus('storyStatus','err','Please select a photo!');return;}
+  const btn=document.getElementById('storyBtn'); btn.disabled=true;
+  setStatus('storyStatus','loading','<span class="mini-spin"></span> Uploading story...');
+  try{
+    const url=await uploadFile(storyFileData,`stories/${cu.id}`);
+    const {error}=await sb.from('stories').insert({
+      user_id:cu.id, media_url:url,
+      caption:document.getElementById('storyCaption').value.trim()||null,
+      expires_at:new Date(Date.now()+24*60*60*1000).toISOString()
+    });
+    if(error) throw new Error('DB error: '+error.message);
+    setStatus('storyStatus','ok','✅ Story added!');
+    setTimeout(()=>{closeModal('storyModal');loadStories();},1200);
+  }catch(e){setStatus('storyStatus','err','❌ '+e.message);}
+  finally{btn.disabled=false;}
+}
+
+// ── LOAD STORIES ────────────────────────────────────────────
+async function loadStories(){
+  const bar=document.getElementById('storiesWrap');
+  try{
+    const {data:stories}=await sb.from('stories')
+      .select('id,user_id,media_url,caption,created_at,profiles(id,full_name,avatar_url)')
+      .gt('expires_at',new Date().toISOString())
+      .order('created_at',{ascending:false})
+      .limit(30);
+
+    // Get viewed stories
+    const {data:viewed}=await sb.from('story_views').select('story_id').eq('viewer_id',cu.id);
+    const viewedIds=new Set((viewed||[]).map(v=>v.story_id));
+
+    const myBtn=bar.querySelector('.story-item');
+    bar.innerHTML=''; bar.appendChild(myBtn);
+
+    // Group by user
+    const byUser={};
+    (stories||[]).forEach(s=>{
+      if(!byUser[s.user_id]) byUser[s.user_id]={prof:s.profiles,stories:[]};
+      byUser[s.user_id].stories.push(s);
+    });
+
+    Object.values(byUser).forEach(({prof,stories:ss})=>{
+      const isMine=ss[0].user_id===cu.id;
+      const allViewed=ss.every(s=>viewedIds.has(s.id));
+      const div=document.createElement('div'); div.className='story-item';
+      div.onclick=()=>viewStory(ss,prof);
+      const av=prof?.avatar_url?`<img src="${prof.avatar_url}"/>`:prof?.full_name?.[0]||'🌸';
+      div.innerHTML=`
+        <div class="story-ring ${allViewed&&!isMine?'seen':''}">
+          <div class="story-av">${av}</div>
+        </div>
+        <span class="story-name">${isMine?'Your Story':(prof?.full_name||'User').split(' ')[0]}</span>`;
+      bar.appendChild(div);
+    });
+  }catch(e){console.warn('Stories error:',e);}
+}
+
+// ── STORY VIEWER ─────────────────────────────────────────
+async function viewStory(stories,prof){
+  curStory=stories[0];
+  const isOwn=stories[0].user_id===cu.id;
+  document.getElementById('svBg').classList.add('open');
+  const av=prof?.avatar_url?`<img src="${prof.avatar_url}"/>`:prof?.full_name?.[0]||'🌸';
+  document.getElementById('svAvatar').innerHTML=av;
+  document.getElementById('svName').textContent=isOwn?'Your Story':prof?.full_name||'User';
+  document.getElementById('svTime').textContent=timeAgo(stories[0].created_at);
+  document.getElementById('svCap').textContent=stories[0].caption||'';
+
+  const img=document.getElementById('svMedia'),bg=document.getElementById('svColorBg');
+  if(stories[0].media_url){img.src=stories[0].media_url;img.style.display='block';bg.style.display='none';}
+  else{img.style.display='none';bg.style.display='flex';}
+
+  // Progress bar
+  const fill=document.getElementById('svFill');
+  fill.style.transition='none';fill.style.width='0';
+  setTimeout(()=>{fill.style.transition='width 5s linear';fill.style.width='100%';},50);
+  clearTimeout(svTimer); svTimer=setTimeout(closeSV,5200);
+
+  // Show viewers btn if own story
+  const vBtn=document.getElementById('svViewersBtn');
+  if(isOwn){
+    vBtn.style.display='flex';
+    loadStoryViewers(stories[0].id);
+  }else{
+    vBtn.style.display='none';
+    document.getElementById('svViewersPanel').classList.remove('open');
+    // Record view
+    try{await sb.from('story_views').insert({story_id:stories[0].id,viewer_id:cu.id});}catch(e){}
+  }
+}
+
+async function loadStoryViewers(storyId){
+  const list=document.getElementById('svViewersList');
+  list.innerHTML='<div class="mini-spin"></div>';
+  try{
+    const {data:views}=await sb.from('story_views')
+      .select('viewed_at, profiles!story_views_viewer_id_fkey(id,full_name,avatar_url)')
+      .eq('story_id',storyId)
+      .order('viewed_at',{ascending:false});
+    document.getElementById('svViewCount').textContent=(views||[]).length;
+    list.innerHTML='';
+    if(!views||views.length===0){
+      list.innerHTML='<div style="color:var(--muted);font-size:.83rem;text-align:center;padding:.8rem">No viewers yet</div>';
+      return;
+    }
+    views.forEach(v=>{
+      const prof=v.profiles;
+      const div=document.createElement('div');div.className='sv-view-item';
+      const av=prof?.avatar_url?`<img src="${prof.avatar_url}"/>`:prof?.full_name?.[0]||'🌸';
+      div.innerHTML=`
+        <div class="sv-view-av">${av}</div>
+        <div>
+          <div class="sv-view-name">${prof?.full_name||'User'}</div>
+          <div class="sv-view-time">${timeAgo(v.viewed_at)}</div>
+        </div>
+        <div style="margin-left:auto;color:var(--pink);font-size:.85rem">❤️</div>`;
+      list.appendChild(div);
+    });
+  }catch(e){list.innerHTML=`<div style="color:var(--muted);font-size:.8rem">${e.message}</div>`;}
+}
+
+function toggleViewers(){
+  document.getElementById('svViewersPanel').classList.toggle('open');
+}
+
+function closeSV(){
+  clearTimeout(svTimer);
+  document.getElementById('svBg').classList.remove('open');
+  document.getElementById('svFill').style.width='0';
+  document.getElementById('svViewersPanel').classList.remove('open');
+}
+document.getElementById('svBg').onclick=e=>{if(e.target===document.getElementById('svBg'))closeSV();};
+
+// ── LOAD FOLLOWING ──────────────────────────────────────────
+async function loadFollowing(){
+  try{
+    const {data:follows}=await sb.from('follows')
+      .select('following_id, profiles!follows_following_id_fkey(id,full_name,avatar_url)')
+      .eq('follower_id',cu.id);
+    if(!follows||follows.length===0) return;
+    const section=document.getElementById('followingSection');
+    const row=document.getElementById('followingRow');
+    section.style.display='block';
+    row.innerHTML='';
+    follows.forEach(f=>{
+      const prof=f.profiles;
+      const div=document.createElement('div');div.className='following-chip';
+      const av=prof?.avatar_url?`<img src="${prof.avatar_url}"/>`:prof?.full_name?.[0]||'🌸';
+      div.innerHTML=`
+        <div class="following-chip-av">${av}</div>
+        <span class="following-chip-name">${prof?.full_name?.split(' ')[0]||'User'}</span>`;
+      div.onclick=()=>filterFeedByUser(prof?.id);
+      row.appendChild(div);
+    });
+  }catch(e){console.warn('Following load error:',e);}
+}
+
+let feedFilter=null;
+function filterFeedByUser(uid){
+  feedFilter=uid;
+  loadFeed();
+}
+
+// ── LOAD FEED ────────────────────────────────────────────────
+async function loadFeed(){
+  const feed=document.getElementById('feed');
+  feed.innerHTML='<div style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></div>';
+  try{
+    let query=sb.from('posts')
+      .select('*,profiles(id,full_name,avatar_url,username)')
+      .eq('is_public',true)
+      .order('created_at',{ascending:false})
+      .limit(20);
+    if(feedFilter) query=query.eq('user_id',feedFilter);
+
+    const {data:posts,error}=await query;
+    if(error) throw error;
+
+    const {data:myLikes}=await sb.from('likes').select('post_id').eq('user_id',cu.id);
+    const likedSet=new Set((myLikes||[]).map(l=>l.post_id));
+
+    if(!posts||posts.length===0){
+      feed.innerHTML=`
+        <div style="text-align:center;padding:3rem 1rem;color:var(--muted)">
+          <div style="font-size:3rem;margin-bottom:1rem">📸</div>
+          <h3 style="color:var(--text);margin-bottom:.5rem">${feedFilter?'No posts from this user':'No posts yet!'}</h3>
+          ${feedFilter?`<button onclick="feedFilter=null;loadFeed()" style="padding:.5rem 1rem;background:var(--pink);border:none;border-radius:50px;color:#fff;cursor:pointer;font-size:.83rem;margin-top:.5rem">Show all posts</button>`:''}
+          ${!feedFilter?`<button onclick="openPostModal('photo')" style="padding:.6rem 1.3rem;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;border-radius:50px;color:#fff;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:.8rem">📷 Create First Post</button>`:''}
+        </div>`;
+      return;
+    }
+    feed.innerHTML='';
+    if(feedFilter){
+      const clearBtn=document.createElement('div');
+      clearBtn.style.cssText='text-align:center;margin-bottom:.8rem;';
+      clearBtn.innerHTML=`<button onclick="feedFilter=null;loadFeed()" style="padding:.3rem .9rem;background:rgba(255,107,157,.1);border:1px solid rgba(255,107,157,.3);border-radius:50px;color:var(--pink);cursor:pointer;font-size:.78rem;">✕ Show all posts</button>`;
+      feed.appendChild(clearBtn);
+    }
+    posts.forEach(p=>feed.appendChild(buildCard(p,likedSet.has(p.id))));
+  }catch(e){
+    feed.innerHTML=`<div style="text-align:center;color:var(--error);padding:2rem">Error: ${e.message}</div>`;
+  }
+}
+
+// ── BUILD CARD ────────────────────────────────────────────────
+function buildCard(post,liked){
+  const card=document.createElement('div');card.className='post-card';card.dataset.pid=post.id;
+  const isOwn=post.user_id===cu.id;
+  const av=post.profiles?.avatar_url?`<img src="${post.profiles.avatar_url}"/>`:post.profiles?.full_name?.[0]||'🌸';
+  let media='';
+  if(post.image_url){
+    if(post.post_type==='reel'){
+      media=`<video class="post-img" style="max-height:500px;background:#000" controls playsinline loop muted><source src="${post.image_url}"/></video>`;
+    }else{
+      media=`<img class="post-img" src="${post.image_url}" loading="lazy"/>`;
+    }
+  }
+  const cap=(post.caption||'').replace(/#(\w+)/g,'<span class="hashtag">#$1</span>').replace(/@(\w+)/g,'<span class="mention">@$1</span>');
+  card.innerHTML=`
+    <div class="post-head">
+      <div class="p-av">${av}</div>
+      <div style="flex:1">
+        <div class="p-name">${post.profiles?.full_name||'User'}</div>
+        <div class="p-time">${timeAgo(post.created_at)}</div>
+      </div>
+      ${isOwn
+        ?`<button onclick="delPost('${post.id}',this.closest('.post-card'))" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem" title="Delete">🗑️</button>`
+        :`<button class="follow-btn nf" data-uid="${post.user_id}" onclick="toggleFollow(this,'${post.user_id}')">Follow</button>`
+      }
+    </div>
+    ${media}
+    ${cap?`<div class="post-body"><div class="post-caption">${cap}</div></div>`:''}
+    <div class="post-foot">
+      <button class="act ${liked?'liked':''}" onclick="toggleLike(this,'${post.id}')">
+        ${liked?'❤️':'🤍'} <span>${post.likes_count||0}</span>
+      </button>
+      <button class="act" onclick="openComments('${post.id}')">💬 <span>${post.comments_count||0}</span></button>
+      <button class="act" onclick="sharePost('${post.id}')">↗️</button>
+      <div style="flex:1"></div>
+      <button class="act" onclick="this.classList.toggle('saved');this.textContent=this.classList.contains('saved')?'🔖✓':'🔖'">🔖</button>
+    </div>`;
+  return card;
+}
+
+// ── LIKE ──────────────────────────────────────────────────────
+async function toggleLike(btn,pid){
+  const liked=btn.classList.contains('liked');
+  const sp=btn.querySelector('span');
+  btn.classList.toggle('liked');
+  btn.innerHTML=`${liked?'🤍':'❤️'} <span>${Math.max(0,parseInt(sp.textContent)+(liked?-1:1))}</span>`;
+  try{
+    if(liked) await sb.from('likes').delete().eq('user_id',cu.id).eq('post_id',pid);
+    else await sb.from('likes').insert({user_id:cu.id,post_id:pid});
+  }catch(e){console.warn(e);}
+}
+
+// ── FOLLOW ─────────────────────────────────────────────────────
+async function toggleFollow(btn,uid){
+  const following=btn.classList.contains('fl');
+  btn.classList.toggle('fl');btn.classList.toggle('nf');
+  btn.textContent=following?'Follow':'Following ✓';
+  try{
+    if(following) await sb.from('follows').delete().eq('follower_id',cu.id).eq('following_id',uid);
+    else await sb.from('follows').insert({follower_id:cu.id,following_id:uid});
+    loadFollowing();
+  }catch(e){console.warn(e);}
+}
+
+// ── COMMENTS ───────────────────────────────────────────────────
+async function openComments(pid){
+  curCommentPost=pid;
+  document.getElementById('commentsModal').classList.add('open');
+  document.getElementById('cmInput').value='';
+  const list=document.getElementById('cmList');
+  list.innerHTML='<div style="text-align:center;padding:1rem"><div class="mini-spin"></div></div>';
+  try{
+    const {data:cms}=await sb.from('comments')
+      .select('*,profiles(full_name,avatar_url)')
+      .eq('post_id',pid).order('created_at',{ascending:true});
+    list.innerHTML=!cms?.length?'<div style="text-align:center;color:var(--muted);padding:1rem;font-size:.83rem">No comments yet 💬</div>':'';
+    (cms||[]).forEach(c=>{
+      const div=document.createElement('div');div.className='cm-item';
+      const av=c.profiles?.avatar_url?`<img src="${c.profiles.avatar_url}"/>`:c.profiles?.full_name?.[0]||'🌸';
+      div.innerHTML=`<div class="cm-av">${av}</div><div><div class="cm-name">${c.profiles?.full_name||'User'}</div><div class="cm-text">${c.content}</div></div>`;
+      list.appendChild(div);
+    });
+  }catch(e){list.innerHTML=`<div style="color:var(--error);padding:1rem">${e.message}</div>`;}
+}
+
+async function submitComment(){
+  const inp=document.getElementById('cmInput');
+  const txt=inp.value.trim();if(!txt||!curCommentPost)return;
+  inp.value='';
+  try{
+    await sb.from('comments').insert({user_id:cu.id,post_id:curCommentPost,content:txt});
+    const card=document.querySelector(`[data-pid="${curCommentPost}"]`);
+    if(card){const sp=card.querySelectorAll('.act')[1]?.querySelector('span');if(sp)sp.textContent=parseInt(sp.textContent)+1;}
+    const div=document.createElement('div');div.className='cm-item';
+    div.innerHTML=`<div class="cm-av">${cp?.avatar_url?`<img src="${cp.avatar_url}"/>`:cp?.full_name?.[0]||'🌸'}</div><div><div class="cm-name">${cp?.full_name||'You'}</div><div class="cm-text">${txt}</div></div>`;
+    document.getElementById('cmList').appendChild(div);
+  }catch(e){console.warn(e);}
+}
+
+// ── DELETE ──────────────────────────────────────────────────────
+async function delPost(pid,card){
+  if(!confirm('Delete this post?'))return;
+  try{await sb.from('posts').delete().eq('id',pid);card.remove();}
+  catch(e){alert('Error: '+e.message);}
+}
+
+// ── SHARE ────────────────────────────────────────────────────────
+function sharePost(pid){
+  const url=window.location.origin+'/social.html';
+  if(navigator.share)navigator.share({title:'AI Sweety Post',url});
+  else{navigator.clipboard?.writeText(url);alert('Link copied! 🔗');}
+}
+
+// ── SUGGESTED ────────────────────────────────────────────────────
+async function loadSuggested(){
+  const c=document.getElementById('suggestedList');
+  try{
+    const {data:fol}=await sb.from('follows').select('following_id').eq('follower_id',cu.id);
+    const fIds=new Set((fol||[]).map(f=>f.following_id));fIds.add(cu.id);
+    const {data:users}=await sb.from('profiles').select('id,full_name,avatar_url,followers_count').limit(15);
+    const list=(users||[]).filter(u=>!fIds.has(u.id)).slice(0,5);
+    if(!list.length){c.innerHTML='<div style="font-size:.78rem;color:var(--muted)">No suggestions yet</div>';return;}
+    c.innerHTML='';
+    list.forEach(u=>{
+      const div=document.createElement('div');div.className='sug-item';
+      const av=u.avatar_url?`<img src="${u.avatar_url}"/>`:u.full_name?.[0]||'🌸';
+      div.innerHTML=`
+        <div class="sug-av">${av}</div>
+        <div style="flex:1;min-width:0">
+          <div class="sug-name">${u.full_name||'User'}</div>
+          <div class="sug-sub">${u.followers_count||0} followers</div>
+        </div>
+        <button class="follow-sm" onclick="followUser(this,'${u.id}')">Follow</button>`;
+      c.appendChild(div);
+    });
+  }catch(e){c.innerHTML=`<div style="font-size:.78rem;color:var(--muted)">${e.message}</div>`;}
+}
+
+async function followUser(btn,uid){
+  btn.textContent='✓';btn.style.cssText='background:rgba(255,255,255,.1);color:var(--muted);padding:.22rem .65rem;border-radius:50px;font-size:.73rem;font-weight:600;cursor:default;border:none;';
+  try{await sb.from('follows').insert({follower_id:cu.id,following_id:uid});}catch(e){}
+  loadFollowing();
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+function timeAgo(d){
+  const s=(Date.now()-new Date(d))/1000;
+  if(s<60)return 'just now';
+  if(s<3600)return Math.floor(s/60)+'m ago';
+  if(s<86400)return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
 </script>
 </body></html>
