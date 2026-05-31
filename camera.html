@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>Camera Filters — AI Sweety</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--pink:#ff6b9d;--purple:#a855f7;--dark:#0a0a0f;--dark2:#12121a;--text:#f0f0ff;--muted:#8888aa;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:#000;}
+body{display:flex;flex-direction:column;color:var(--text);font-family:'DM Sans',sans-serif;}
+
+/* CAMERA AREA */
+.cam-wrap{position:relative;flex:1;overflow:hidden;background:#000;}
+#videoEl{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block;}
+#canvasEl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+#outputCanvas{position:absolute;inset:0;width:100%;height:100%;display:none;}
+
+/* FILTER OVERLAYS (CSS-based) */
+.filter-overlay{position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:0;transition:.3s;}
+.filter-overlay.active{opacity:1;}
+
+/* TOP BAR */
+.topbar{position:absolute;top:0;left:0;right:0;z-index:10;padding:.8rem 1rem;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(0,0,0,.7),transparent);}
+.back-btn{color:#fff;text-decoration:none;font-size:1.4rem;width:36px;height:36px;display:flex;align-items:center;justify-content:center;}
+.topbar-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff;}
+.flash-btn{width:36px;height:36px;background:rgba(255,255,255,.15);border:none;border-radius:50%;color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+/* FILTER LABEL */
+.filter-label{position:absolute;top:4rem;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.5);color:#fff;padding:.25rem .8rem;border-radius:50px;font-size:.8rem;font-weight:600;backdrop-filter:blur(4px);white-space:nowrap;z-index:10;}
+
+/* FILTER STRIP */
+.filter-strip{position:absolute;bottom:9rem;left:0;right:0;z-index:10;display:flex;gap:.7rem;padding:.6rem 1rem;overflow-x:auto;scrollbar-width:none;}
+.filter-strip::-webkit-scrollbar{display:none;}
+.filter-chip{display:flex;flex-direction:column;align-items:center;gap:.3rem;cursor:pointer;flex-shrink:0;}
+.filter-thumb{width:52px;height:52px;border-radius:50%;border:2.5px solid rgba(255,255,255,.3);overflow:hidden;transition:.2s;position:relative;}
+.filter-thumb.active{border-color:var(--pink);box-shadow:0 0 0 2px var(--pink);}
+.filter-thumb-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;}
+.filter-name{font-size:.65rem;color:rgba(255,255,255,.8);text-align:center;max-width:56px;}
+
+/* BOTTOM CONTROLS */
+.bottom-controls{position:absolute;bottom:0;left:0;right:0;z-index:10;padding:1rem 1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);}
+.gallery-btn{width:50px;height:50px;border-radius:12px;overflow:hidden;border:2px solid rgba(255,255,255,.3);cursor:pointer;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:rgba(255,255,255,.7);}
+.gallery-btn img{width:100%;height:100%;object-fit:cover;}
+.capture-btn{width:72px;height:72px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;box-shadow:0 0 20px rgba(255,255,255,.3);}
+.capture-btn:active{transform:scale(.92);}
+.capture-inner{width:58px;height:58px;border-radius:50%;background:#fff;border:2px solid rgba(0,0,0,.15);}
+.flip-btn{width:50px;height:50px;background:rgba(255,255,255,.15);border:none;border-radius:50%;color:#fff;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+/* CAPTURED PHOTO PREVIEW */
+.preview-overlay{position:fixed;inset:0;background:#000;z-index:100;display:none;flex-direction:column;}
+.preview-overlay.show{display:flex;}
+#capturedImg{flex:1;object-fit:contain;width:100%;}
+.preview-actions{display:flex;gap:.8rem;padding:1rem 1.5rem;padding-bottom:max(1rem,env(safe-area-inset-bottom));background:rgba(0,0,0,.8);}
+.prev-btn{flex:1;padding:.8rem;border-radius:50px;font-size:.9rem;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:.4rem;}
+.prev-discard{background:rgba(255,255,255,.1);color:#fff;}
+.prev-save{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
+.prev-share{background:rgba(255,107,157,.2);border:1px solid rgba(255,107,157,.3);color:var(--pink);}
+
+/* EMOJI STICKERS overlay */
+.sticker-label{position:absolute;font-size:3rem;pointer-events:none;z-index:5;text-shadow:0 2px 8px rgba(0,0,0,.5);}
+
+/* SPIN */
+@keyframes spin{to{transform:rotate(360deg);}}
+.spin{width:32px;height:32px;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin:auto;}
+.loading-cam{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;z-index:5;}
+</style>
+</head>
+<body>
+
+<div class="cam-wrap" id="camWrap">
+  <div class="loading-cam" id="loadingCam"><div class="spin"></div></div>
+  <video id="videoEl" autoplay playsinline muted></video>
+  <canvas id="canvasEl"></canvas>
+
+  <!-- FILTER OVERLAY (CSS) -->
+  <div class="filter-overlay" id="filterOverlay"></div>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <a href="social.html" class="back-btn">←</a>
+    <span class="topbar-title">🌸 Sweety Camera</span>
+    <button class="flash-btn" id="flashBtn" onclick="toggleFlash()">⚡</button>
+  </div>
+
+  <!-- FILTER LABEL -->
+  <div class="filter-label" id="filterLabel">No Filter</div>
+
+  <!-- FILTER STRIP -->
+  <div class="filter-strip" id="filterStrip"></div>
+
+  <!-- BOTTOM CONTROLS -->
+  <div class="bottom-controls">
+    <div class="gallery-btn" id="galleryBtn" onclick="document.getElementById('galleryInp').click()">🖼️</div>
+    <div class="capture-btn" onclick="capturePhoto()">
+      <div class="capture-inner"></div>
+    </div>
+    <button class="flip-btn" onclick="flipCamera()">🔄</button>
+  </div>
+</div>
+
+<!-- CAPTURED PHOTO PREVIEW -->
+<div class="preview-overlay" id="previewOverlay">
+  <img id="capturedImg" src="" alt="Captured"/>
+  <div class="preview-actions">
+    <button class="prev-btn prev-discard" onclick="discardPhoto()">✕ Discard</button>
+    <button class="prev-btn prev-save" onclick="savePhoto()">💾 Save</button>
+    <button class="prev-btn prev-share" onclick="shareToStory()">📖 Story</button>
+  </div>
+</div>
+
+<input type="file" id="galleryInp" accept="image/*" onchange="loadGalleryPhoto(this)" style="display:none"/>
+
+<script>
+let stream=null,facingMode='user',currentFilter='none';
+let capturedDataUrl=null,flashOn=false;
+const video=document.getElementById('videoEl');
+const canvas=document.getElementById('canvasEl');
+const ctx=canvas.getContext('2d');
+
+// ── FILTERS ────────────────────────────────────────────
+const FILTERS=[
+  {id:'none',name:'Normal',icon:'📷',css:'none',label:'No Filter'},
+  {id:'beauty',name:'Beauty',icon:'✨',css:'brightness(1.1) contrast(.95) saturate(1.1)',label:'Beauty ✨'},
+  {id:'vintage',name:'Vintage',icon:'🎞️',css:'sepia(.5) contrast(1.1) brightness(.95)',label:'Vintage 🎞️'},
+  {id:'bw',name:'B&W',icon:'⬛',css:'grayscale(1) contrast(1.1)',label:'Black & White ⬛'},
+  {id:'warm',name:'Warm',icon:'🌅',css:'sepia(.3) saturate(1.4) brightness(1.05)',label:'Warm 🌅'},
+  {id:'cool',name:'Cool',icon:'❄️',css:'hue-rotate(30deg) saturate(1.2) brightness(1.05)',label:'Cool ❄️'},
+  {id:'neon',name:'Neon',icon:'⚡',css:'hue-rotate(270deg) saturate(2) brightness(1.1) contrast(1.2)',label:'Neon ⚡'},
+  {id:'dreamy',name:'Dreamy',icon:'💜',css:'hue-rotate(240deg) saturate(1.5) brightness(1.1) blur(.5px)',label:'Dreamy 💜'},
+  {id:'golden',name:'Golden',icon:'🌟',css:'sepia(.7) saturate(1.5) brightness(1.1)',label:'Golden 🌟'},
+  {id:'fade',name:'Fade',icon:'🌫️',css:'contrast(.8) brightness(1.15) saturate(.8)',label:'Fade 🌫️'},
+  {id:'vivid',name:'Vivid',icon:'🌈',css:'saturate(1.8) contrast(1.1) brightness(1.05)',label:'Vivid 🌈'},
+  {id:'pink',name:'Rose',icon:'🌸',css:'hue-rotate(320deg) saturate(1.5) brightness(1.05)',label:'Rose 🌸'},
+  {id:'moody',name:'Moody',icon:'🌑',css:'brightness(.85) contrast(1.2) saturate(.9)',label:'Moody 🌑'},
+  {id:'summer',name:'Summer',icon:'☀️',css:'saturate(1.3) brightness(1.1) hue-rotate(-10deg)',label:'Summer ☀️'},
+  {id:'twilight',name:'Twilight',icon:'🌆',css:'hue-rotate(200deg) saturate(1.3) brightness(.95)',label:'Twilight 🌆'},
+];
+
+// STICKER OVERLAYS
+const STICKERS=[
+  {id:'none',label:'Clean'},
+  {id:'hearts',label:'Hearts',emoji:'❤️',pos:{top:'15%',left:'50%'}},
+  {id:'stars',label:'Stars',emoji:'⭐',pos:{top:'10%',right:'15%'}},
+  {id:'flowers',label:'Flowers',emoji:'🌸',pos:{bottom:'30%',left:'10%'}},
+  {id:'crown',label:'Crown',emoji:'👑',pos:{top:'5%',left:'40%'}},
+  {id:'sunglasses',label:'Cool',emoji:'😎',pos:{top:'35%',left:'35%'}},
+];
+
+let currentSticker='none';
+
+// ── START CAMERA ──────────────────────────────────────
+async function startCamera(){
+  try{
+    if(stream)stream.getTracks().forEach(t=>t.stop());
+    stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode,width:{ideal:1280},height:{ideal:720}},
+      audio:false
+    });
+    video.srcObject=stream;
+    video.onloadedmetadata=()=>{
+      canvas.width=video.videoWidth;
+      canvas.height=video.videoHeight;
+      document.getElementById('loadingCam').style.display='none';
+    };
+    applyFilter(currentFilter);
+  }catch(e){
+    document.getElementById('loadingCam').innerHTML=`<div style="color:#ff4d4d;text-align:center;padding:2rem"><div style="font-size:2.5rem;margin-bottom:.8rem">📷</div><p>Camera access denied!<br/><small>Please allow camera permission in browser settings.</small></p></div>`;
+  }
+}
+
+// ── BUILD FILTER STRIP ────────────────────────────────
+function buildFilterStrip(){
+  const strip=document.getElementById('filterStrip');
+  FILTERS.forEach(f=>{
+    const div=document.createElement('div');div.className='filter-chip';
+    const swatch=getFilterSwatch(f);
+    div.innerHTML=`
+      <div class="filter-thumb ${f.id===currentFilter?'active':''}" id="fthumb-${f.id}">
+        <div class="filter-thumb-inner" style="filter:${f.css}">${f.icon}</div>
+      </div>
+      <span class="filter-name">${f.name}</span>`;
+    div.onclick=()=>applyFilter(f.id);
+    strip.appendChild(div);
+  });
+}
+
+function applyFilter(filterId){
+  currentFilter=filterId;
+  const f=FILTERS.find(f=>f.id===filterId)||FILTERS[0];
+  // Apply CSS filter to video element
+  video.style.filter=f.css;
+  document.getElementById('filterLabel').textContent=f.label;
+  // Update active state
+  document.querySelectorAll('.filter-thumb').forEach(el=>el.classList.remove('active'));
+  const active=document.getElementById('fthumb-'+filterId);
+  if(active){active.classList.add('active');active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}
+}
+
+// ── CAPTURE PHOTO ─────────────────────────────────────
+function capturePhoto(){
+  canvas.width=video.videoWidth||640;
+  canvas.height=video.videoHeight||480;
+  // Draw video frame with filter applied
+  ctx.save();
+  // Mirror for front camera
+  if(facingMode==='user'){ctx.translate(canvas.width,0);ctx.scale(-1,1);}
+  ctx.filter=video.style.filter||'none';
+  ctx.drawImage(video,0,0,canvas.width,canvas.height);
+  ctx.restore();
+  // Capture
+  capturedDataUrl=canvas.toDataURL('image/jpeg',.92);
+  document.getElementById('capturedImg').src=capturedDataUrl;
+  document.getElementById('previewOverlay').classList.add('show');
+  // Flash effect
+  flashEffect();
+}
+
+function flashEffect(){
+  const fl=document.createElement('div');
+  fl.style.cssText='position:fixed;inset:0;background:#fff;z-index:200;opacity:.8;pointer-events:none;';
+  document.body.appendChild(fl);
+  setTimeout(()=>fl.remove(),150);
+}
+
+function discardPhoto(){
+  capturedDataUrl=null;
+  document.getElementById('previewOverlay').classList.remove('show');
+}
+
+async function savePhoto(){
+  if(!capturedDataUrl)return;
+  const a=document.createElement('a');
+  a.href=capturedDataUrl;
+  a.download=`sweety-photo-${Date.now()}.jpg`;
+  a.click();
+  showToast('Photo saved! 📸');
+  setTimeout(()=>discardPhoto(),1000);
+}
+
+async function shareToStory(){
+  if(!capturedDataUrl)return;
+  // Store in sessionStorage to share to story
+  sessionStorage.setItem('pendingStoryPhoto',capturedDataUrl);
+  window.location.href='social.html?openStory=1';
+}
+
+// ── GALLERY ───────────────────────────────────────────
+function loadGalleryPhoto(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{capturedDataUrl=e.target.result;document.getElementById('capturedImg').src=e.target.result;document.getElementById('previewOverlay').classList.add('show');};
+  r.readAsDataURL(f);inp.value='';
+}
+
+// ── CAMERA CONTROLS ───────────────────────────────────
+function flipCamera(){
+  facingMode=facingMode==='user'?'environment':'user';
+  video.style.transform=facingMode==='user'?'scaleX(-1)':'scaleX(1)';
+  startCamera();
+}
+
+function toggleFlash(){
+  flashOn=!flashOn;
+  document.getElementById('flashBtn').textContent=flashOn?'🔦':'⚡';
+  // Torch control
+  if(stream){
+    const track=stream.getVideoTracks()[0];
+    if(track?.getCapabilities()?.torch){
+      track.applyConstraints({advanced:[{torch:flashOn}]}).catch(()=>{});
+    }
+  }
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function showToast(msg){
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:6rem;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:.5rem 1.2rem;border-radius:50px;font-size:.83rem;z-index:500;backdrop-filter:blur(8px);white-space:nowrap;';
+  t.textContent=msg;document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2000);
+}
+
+// Start
+buildFilterStrip();
+startCamera();
+</script>
+</body></html>
