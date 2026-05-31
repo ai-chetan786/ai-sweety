@@ -9,6 +9,7 @@
     { "src": "/profile", "dest": "/profile.html" },
     { "src": "/social", "dest": "/social.html" },
     { "src": "/messages", "dest": "/messages.html" },
+    { "src": "/camera", "dest": "/camera.html" },
     { "src": "/bio", "dest": "/bio.html" },
     { "src": "/forgot-password", "dest": "/forgot-password.html" },
     { "src": "/reset-password", "dest": "/reset-password.html" },
